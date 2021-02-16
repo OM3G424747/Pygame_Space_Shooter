@@ -1,4 +1,5 @@
 import pygame
+import random
 
 Screen_Width = 800
 Screen_Height = 800
@@ -20,7 +21,7 @@ class GameObject: #class for defining game objects that will be drawn onto the g
         self.Width = Width
         self.Height = Height
     
-    def Draw (self,background):
+    def Draw (self,background): #This function is used to draw the object on the game screen
         background.blit(self.Image,(self.X_pos,self.Y_pos)) #Blit funtion is used to draw imaghes to the game screen/ surface selected along with the X and Y Pos taken in the form of a tuple 
 
 class PlayerCharacter(GameObject):
@@ -30,12 +31,37 @@ class PlayerCharacter(GameObject):
     def __init__ (self, image_path, X_pos, Y_pos, Width, Height):
        GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
     
-    def Move(self, direction):
-        if direction > 0:
-            self.Y_pos -= self.Speed 
-        elif direction < 0:
-            self.Y_pos += self.Speed
+    def Move(self, Y_direction, X_direction, Max_Height, Max_Width):
+        if Y_direction > 0:
+            self.Y_pos = self.Y_pos - self.Speed 
+        elif Y_direction < 0:
+            self.Y_pos = self.Y_pos + self.Speed
+        elif X_direction > 0:
+            self.X_pos = self.X_pos - self.Speed
+        elif X_direction < 0:
+            self.X_pos = self.X_pos + self.Speed
+        
+        if self.Y_pos >= Max_Height - 80:
+            self.Y_pos = Max_Height - 80
+        if self.Y_pos <= 5:
+            self.Y_pos = 5
+        if self.X_pos >= Max_Width - 80:
+            self.X_pos = Max_Width - 80
+        if self.X_pos <= 5:
+            self.X_pos = 5
 
+class NonPlayerCharacter(GameObject):
+    
+    Speed = 5 
+    def __init__ (self, image_path, X_pos, Y_pos, Width, Height):
+       GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
+    
+    def Move(self, game_screen): #moves non-player character from left to right based on the size of the game screen
+        if self.X_pos <= 10:
+            self.Speed = abs(self.Speed)
+        elif self.X_pos >= game_screen - 80:
+            self.Speed = -abs(self.Speed)
+        self.X_pos += self.Speed  
 
 
 class Game:
@@ -52,8 +78,10 @@ class Game:
     
     def run_game_loop (self):
         Is_Game_Over = False
-        direction = 0
-        Player1 = PlayerCharacter("ship.png", 375,700,75,75) #creates player 1 ship character 
+        Y_direction = 0
+        X_direction = 0
+        Player1 = PlayerCharacter("ship.png", 360,700,75,75) #creates player 1 ship character 
+        Enemy = NonPlayerCharacter("enemy.png",360,200,75,75)
 
         while Is_Game_Over == False: #game loop checks if the game is over and will repeat until the condition is met and the game over state is set to True
             for event in pygame.event.get():
@@ -61,25 +89,30 @@ class Game:
                     Is_Game_Over = True
                 elif event.type == pygame.KEYDOWN: #Checks when the up or down key is pressed by the user 
                     if event.key == pygame.K_UP:
-                        direction = 1
+                        Y_direction = 1
                     elif event.key == pygame.K_DOWN:
-                        direction = -1
+                        Y_direction = -1 
+                    elif event.key == pygame.K_LEFT:
+                        X_direction = 1
+                    elif event.key == pygame.K_RIGHT:
+                        X_direction = -1
                 elif event.type == pygame.KEYUP: #Checks when the key is released 
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                        direction = 0
+                        Y_direction = 0
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_LEFT:
+                        X_direction = 0
 
                 print(event)
             self.Game_Screen.fill(Black_Colour)
-            Player1.Move(direction)
+            Enemy.Draw (self.Game_Screen) 
+            Enemy.Move(Screen_Width)
+            Player1.Move(Y_direction, X_direction, Screen_Height, Screen_Width)
             Player1.Draw (self.Game_Screen)
          
 
             pygame.display.update() #Updates the current frame after completing the loop
             Clock.tick(self.Tick_Rate) #Sets the frame rate per second
     
-
-
-
 
 
 pygame.init()
