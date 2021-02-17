@@ -63,6 +63,11 @@ class NonPlayerCharacter(GameObject):
             self.Speed = -abs(self.Speed)
         self.X_pos += self.Speed  
 
+    def Lazer(self,game_screen):
+        self.Y_pos += self.Speed + 10
+
+
+
 
 class Game:
     Tick_Rate = 60 #Change to set framerate
@@ -82,6 +87,7 @@ class Game:
         X_direction = 0
         Player1 = PlayerCharacter("ship.png", 360,700,75,75) #creates player 1 ship character 
         Enemy = NonPlayerCharacter("enemy.png",360,200,75,75)
+        Lazer = NonPlayerCharacter("Lazer.png",Player1.X_pos,Player1.Y_pos,10,60)
 
         while Is_Game_Over == False: #game loop checks if the game is over and will repeat until the condition is met and the game over state is set to True
             for event in pygame.event.get():
@@ -106,8 +112,10 @@ class Game:
             self.Game_Screen.fill(Black_Colour)
             Enemy.Draw (self.Game_Screen) 
             Enemy.Move(Screen_Width)
+
             Player1.Move(Y_direction, X_direction, Screen_Height, Screen_Width)
             Player1.Draw (self.Game_Screen)
+                if event.typ #### CONTINUE HERE!!!!!
          
 
             pygame.display.update() #Updates the current frame after completing the loop
