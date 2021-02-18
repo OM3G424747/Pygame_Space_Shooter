@@ -3,7 +3,7 @@ import random
 
 Screen_Width = 800
 Screen_Height = 800
-Screen_Title = "Space Lander Pygame" #Sets name on gamewindow 
+Screen_Title = "Space Shooter Pygame" #Sets name on gamewindow 
 White_Colour = (255,255,255) #colours set according to RGB - R 255 G 255  B 255
 Black_Colour = (0,0,0)
 Red_Colour = (255,0,0)
@@ -67,8 +67,8 @@ class LazerFire(GameObject):
                 if self.Y_pos == 0:
                     self.Ready = True
     
-    def Damage (self, enemy_X_Pos, enemy_Y_Pos):
-        if enemy_X_Pos - 30 < self.X_pos and enemy_X_Pos + 30 > self.X_pos:
+    def Damage (self, enemy_X_Pos, enemy_Y_Pos): #Colision detection for Lazer on Enemy ship
+        if enemy_X_Pos - 5 < self.X_pos and enemy_X_Pos + 75 > self.X_pos and enemy_Y_Pos - 50 < self.Y_pos and enemy_Y_Pos + 50 > self.Y_pos:
             return True
         
 
@@ -109,7 +109,7 @@ class Game:
         Player1 = PlayerCharacter("ship.png", 360,700,75,75) #creates player 1 ship character 
         Enemy = NonPlayerCharacter("enemy.png",360,200,75,75)
         Lazer = LazerFire("Lazer.png",Player1.X_pos, Player1.Y_pos,10,60)
-        Explode = LazerFire ("boom.png",Enemy.X_pos, Enemy.Y_pos,75,75)
+        Explode = LazerFire ("boom.png",Enemy.X_pos -15, Enemy.Y_pos,75,75)
         
         
 
@@ -133,9 +133,11 @@ class Game:
                         X_direction = 0
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
                     if event.key == pygame.K_SPACE:
-                        FireLazar = True
-                        Lazer.Y_pos = Player1.Y_pos
-                        Lazer.X_pos = Player1.X_pos + 32
+                        if FireLazar == False:
+                            FireLazar = True
+                            Lazer.Y_pos = Player1.Y_pos
+                            Lazer.X_pos = Player1.X_pos + 32
+                            
 
                 print(event)
             self.Game_Screen.fill(Black_Colour)
@@ -149,6 +151,8 @@ class Game:
                 Lazer.Fire(FireLazar, self.Game_Screen)
                 if Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == True:
                     Explode.Draw (self.Game_Screen)
+            if Lazer.Y_pos <= 2:  
+                FireLazar = False
             
         
                  #### CONTINUE HERE!!!!! -> Create explosion that moves with enemy ship and triggers 
