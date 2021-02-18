@@ -57,30 +57,34 @@ class LazerFire(GameObject):
     def __init__(self, image_path, X_pos, Y_pos, Width, Height):
         GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)   
     
-    def Fire (self, Fire, Game_Screen):
-        self.Ready = True
-        if Fire == True and self.Ready == True:
-            self.Ready = False
+    def Fire (self, Fire, Direction, Height, Game_Screen):
+        if Fire == True:
             self.Draw(Game_Screen)
-            if self.Y_pos >= 0:
-                self.Y_pos = self.Y_pos - self.Speed
-                if self.Y_pos == 0:
-                    self.Ready = True
+            if Direction == "Up":
+                if self.Y_pos >= 0:
+                    self.Y_pos = self.Y_pos - self.Speed
+                    
+            elif Direction == "Down":
+                if self.Y_pos <= Height:
+                    self.Y_pos = self.Y_pos + self.Speed
+                    
     
     def Damage (self, enemy_X_Pos, enemy_Y_Pos): #Colision detection for Lazer on Enemy ship
         if enemy_X_Pos - 5 < self.X_pos and enemy_X_Pos + 75 > self.X_pos and enemy_Y_Pos - 50 < self.Y_pos and enemy_Y_Pos + 50 > self.Y_pos:
             return True
+        else:
+            return False
         
-
-                   
+       
 
 class NonPlayerCharacter(GameObject):
     
-    Speed = 5 
+    #Speed = random.randint(5, 7) #program AI to change speed at random when fired at
+    Speed = 5
     def __init__ (self, image_path, X_pos, Y_pos, Width, Height):
        GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
     
-    def Move(self, game_screen): #moves non-player character from left to right based on the size of the game screen
+    def Move(self,game_screen): #moves non-player character from left to right based on the size of the game screen
         if self.X_pos <= 10:
             self.Speed = abs(self.Speed)
         elif self.X_pos >= game_screen - 80:
@@ -105,10 +109,12 @@ class Game:
         Y_direction = 0
         X_direction = 0
         FireLazar = False
-        LazerReady = True
+        EnemyLazar = True
+        FireOkay = True
         Player1 = PlayerCharacter("ship.png", 360,700,75,75) #creates player 1 ship character 
         Enemy = NonPlayerCharacter("enemy.png",360,200,75,75)
         Lazer = LazerFire("Lazer.png",Player1.X_pos, Player1.Y_pos,10,60)
+        Enemy_Lazer = LazerFire("Lazer2.png",Enemy.X_pos +35, Enemy.Y_pos,10,60)
         Explode = LazerFire ("boom.png",Enemy.X_pos -15, Enemy.Y_pos,75,75)
         
         
@@ -137,23 +143,38 @@ class Game:
                             FireLazar = True
                             Lazer.Y_pos = Player1.Y_pos
                             Lazer.X_pos = Player1.X_pos + 32
-                            
+              
 
                 print(event)
             self.Game_Screen.fill(Black_Colour)
             Enemy.Draw (self.Game_Screen) 
             Enemy.Move(Screen_Width)
+            
             Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
             Player1.Draw (self.Game_Screen)
-            Explode.Y_pos = Enemy.Y_pos
-            Explode.X_pos = Enemy.X_pos
-            if FireLazar == True and LazerReady == True:
-                Lazer.Fire(FireLazar, self.Game_Screen)
+            if FireLazar == True:
+                Lazer.Fire(FireLazar,"Up",Screen_Height, self.Game_Screen)
                 if Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == True:
+                    Explode.Y_pos = Enemy.Y_pos
+                    Explode.X_pos = Enemy.X_pos
                     Explode.Draw (self.Game_Screen)
             if Lazer.Y_pos <= 2:  
                 FireLazar = False
-            
+
+            if EnemyLazar == True:
+                Enemy_Lazer.Fire(EnemyLazar,"Down",Screen_Height, self.Game_Screen)
+                if Enemy_Lazer.Y_pos >= 730:
+                    EnemyLazar = False
+                    
+                if Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == True:
+                    Explode.Y_pos = Player1.Y_pos
+                    Explode.X_pos = Player1.X_pos
+                    Explode.Draw (self.Game_Screen)
+            elif EnemyLazar == False:
+                if Enemy_Lazer.Y_pos <= 730:
+                    Enemy_Lazer.Y_pos = Enemy.Y_pos
+                    Enemy_Lazer.X_pos = Enemy.X_pos + 35
+                    EnemyLazar = True       
         
                  #### CONTINUE HERE!!!!! -> Create explosion that moves with enemy ship and triggers 
          
@@ -167,11 +188,7 @@ pygame.init()
 
 new_game = Game(Screen_Title,Screen_Width,Screen_Height) #creates a new game part of the "game class"
 
-
-
 new_game.run_game_loop() #Starts the game loop as defined in the class to continue looping until the game over state becomes true 
-
-
 
 pygame.quit()
 quit()
