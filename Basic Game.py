@@ -91,6 +91,13 @@ class NonPlayerCharacter(GameObject):
             self.Speed = -abs(self.Speed)
         self.X_pos += self.Speed  
 
+    def Panic(self,game_screen): #moves non-player character from left to right based on the size of the game screen
+        if self.X_pos <= 10:
+            self.Speed = abs(self.Speed)
+        elif self.X_pos >= game_screen - 80:
+            self.Speed = -abs(self.Speed)
+        self.X_pos += self.Speed*2  
+
         
 class Game:
     Tick_Rate = 60 #Change to set framerate
@@ -148,7 +155,11 @@ class Game:
                 print(event)
             self.Game_Screen.fill(Black_Colour)
             Enemy.Draw (self.Game_Screen) 
-            Enemy.Move(Screen_Width)
+            
+            if FireLazar == True: #### CONTINUE HERE!!!!! -> Create argument to make sure it boosts out of safty and not into player shots  
+                Enemy.Panic(Screen_Width)
+            else:
+                Enemy.Move(Screen_Width)
             
             Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
             Player1.Draw (self.Game_Screen)
@@ -176,7 +187,7 @@ class Game:
                     Enemy_Lazer.X_pos = Enemy.X_pos + 35
                     EnemyLazar = True       
         
-                 #### CONTINUE HERE!!!!! -> Create explosion that moves with enemy ship and triggers 
+                 
          
 
             pygame.display.update() #Updates the current frame after completing the loop
