@@ -115,8 +115,11 @@ class Game:
         Is_Game_Over = False
         Y_direction = 0
         X_direction = 0
+        LazerCount = 0
         FireLazar = False
         EnemyLazar = True
+        
+
         FireOkay = True
         Player1 = PlayerCharacter("ship.png", 360,700,75,75) #creates player 1 ship character 
         Enemy = NonPlayerCharacter("enemy.png",360,200,75,75)
@@ -172,21 +175,31 @@ class Game:
             if Lazer.Y_pos <= 2:  
                 FireLazar = False
 
-            if EnemyLazar == True:
-                Enemy_Lazer.Fire(EnemyLazar,"Down",Screen_Height, self.Game_Screen)
-                if Enemy_Lazer.Y_pos >= 730:
-                    EnemyLazar = False
+            
+
+            if LazerCount == 1:
+                EnemyLazar = True
+                if EnemyLazar == True : 
+                    Enemy_Lazer.Fire(EnemyLazar,"Down",Screen_Height, self.Game_Screen)
+                    if Enemy_Lazer.Y_pos >= 730:
+                        EnemyLazar = False
+                        
+                        LazerCount = 0
+            
+                  
                     
                 if Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == True:
                     Explode.Y_pos = Player1.Y_pos
                     Explode.X_pos = Player1.X_pos
                     Explode.Draw (self.Game_Screen)
-            elif EnemyLazar == False:
-                if Enemy_Lazer.Y_pos <= 730:
-                    Enemy_Lazer.Y_pos = Enemy.Y_pos
-                    Enemy_Lazer.X_pos = Enemy.X_pos + 35
-                    EnemyLazar = True       
-        
+
+            elif Player1.X_pos - 5 <= Enemy.X_pos and Player1.X_pos + 75 >= Enemy.X_pos:
+                Enemy_Lazer.Y_pos = Enemy.Y_pos
+                Enemy_Lazer.X_pos = Enemy.X_pos + 35
+                LazerCount = 1
+
+             
+                      
                  
          
 
