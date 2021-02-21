@@ -76,7 +76,6 @@ class LazerFire(GameObject):
             return False
         
        
-
 class NonPlayerCharacter(GameObject):
     
     #Speed = random.randint(5, 7) #program AI to change speed at random when fired at
@@ -98,6 +97,19 @@ class NonPlayerCharacter(GameObject):
             self.Speed = -abs(self.Speed)
         self.X_pos += self.Speed*2  
 
+class HealthBar:
+    def __init__ (self, X_pos, Y_pos, TotalBlocks):
+
+        self.TotalBlocks = TotalBlocks * 100 #Total lenght the bar will be drawn in the X axis
+        self.X_pos = X_pos
+        self.Y_pos = Y_pos
+        self.colour = (0,255,0)
+
+    def Draw (self, Game_Screen):
+        draw = pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.TotalBlocks,25]) #sets surface, colour and X-pos,Y-pos+size for the bar to be drawn.
+
+
+
         
 class Game:
     Tick_Rate = 60 #Change to set framerate
@@ -118,7 +130,7 @@ class Game:
         LazerCount = 0
         FireLazar = False
         EnemyLazar = True
-        
+        Blocks = 3
 
         FireOkay = True
         Player1 = PlayerCharacter("ship.png", 360,700,75,75) #creates player 1 ship character 
@@ -126,7 +138,7 @@ class Game:
         Lazer = LazerFire("Lazer.png",Player1.X_pos, Player1.Y_pos,10,60)
         Enemy_Lazer = LazerFire("Lazer2.png",Enemy.X_pos +35, Enemy.Y_pos,10,60)
         Explode = LazerFire ("boom.png",Enemy.X_pos -15, Enemy.Y_pos,75,75)
-        
+        Enemy_Health = HealthBar(0,0,Blocks)
         
 
         while Is_Game_Over == False: #game loop checks if the game is over and will repeat until the condition is met and the game over state is set to True
@@ -164,6 +176,7 @@ class Game:
             else:
                 Enemy.Move(Screen_Width)
             
+            Enemy_Health.Draw(self.Game_Screen)
             Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
             Player1.Draw (self.Game_Screen)
             if FireLazar == True:
@@ -172,6 +185,9 @@ class Game:
                     Explode.Y_pos = Enemy.Y_pos
                     Explode.X_pos = Enemy.X_pos
                     Explode.Draw (self.Game_Screen)
+                    Blocks = Blocks - 1
+                    Enemy_Health = HealthBar(0,0,Blocks)
+                    Enemy_Health.Draw(self.Game_Screen)
             if Lazer.Y_pos <= 2:  
                 FireLazar = False
 
