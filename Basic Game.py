@@ -90,12 +90,13 @@ class NonPlayerCharacter(GameObject):
             self.Speed = -abs(self.Speed)
         self.X_pos += self.Speed  
 
-    def Panic(self,game_screen): #moves non-player character from left to right based on the size of the game screen
-        if self.X_pos <= 10:
-            self.Speed = abs(self.Speed)
-        elif self.X_pos >= game_screen - 80:
-            self.Speed = -abs(self.Speed)
-        self.X_pos += self.Speed*2  
+    def Panic(self, Danger, game_screen): #moves non-player character from left to right based on the size of the game screen
+        if Danger == True and self.Speed < 11:
+            if self.X_pos <= 10:
+                self.Speed = abs(self.Speed)
+            elif self.X_pos >= game_screen - 80:
+                self.Speed = -abs(self.Speed)
+            self.X_pos += self.Speed + 1   
 
 class HealthBar:
     def __init__ (self, X_pos, Y_pos, TotalBlocks):
@@ -131,6 +132,7 @@ class Game:
         FireLazar = False
         EnemyLazar = True
         Blocks = 3
+        EnemyHit = False
 
         FireOkay = True
         Player1 = PlayerCharacter("ship.png", 360,700,75,75) #creates player 1 ship character 
@@ -139,7 +141,7 @@ class Game:
         Enemy_Lazer = LazerFire("Lazer2.png",Enemy.X_pos +35, Enemy.Y_pos,10,60)
         Explode = LazerFire ("boom.png",Enemy.X_pos -15, Enemy.Y_pos,75,75)
         Enemy_Health = HealthBar(0,0,Blocks)
-        
+        Danger = False
 
         while Is_Game_Over == False: #game loop checks if the game is over and will repeat until the condition is met and the game over state is set to True
             for event in pygame.event.get():
@@ -171,10 +173,18 @@ class Game:
             self.Game_Screen.fill(Black_Colour)
             Enemy.Draw (self.Game_Screen) 
             
-            if FireLazar == True: #### CONTINUE HERE!!!!! -> Create argument to make sure it boosts out of safty and not into player shots  
-                Enemy.Panic(Screen_Width)
+            if FireLazar == True:
+                if Lazer.X_pos >= Enemy.X_pos - 40 and Lazer.X_pos <= Enemy.X_pos + 115:
+                    Danger = True
+                    Enemy.Panic(Danger, Screen_Width)
+                else:
+                    Danger = False
+            if Danger == False:
+                Enemy.Move(Screen_Width)
+
             else:
                 Enemy.Move(Screen_Width)
+            
             
             Enemy_Health.Draw(self.Game_Screen)
             Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
@@ -185,9 +195,12 @@ class Game:
                     Explode.Y_pos = Enemy.Y_pos
                     Explode.X_pos = Enemy.X_pos
                     Explode.Draw (self.Game_Screen)
+                    EnemyHit = True
+                elif EnemyHit == True and Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == False:
                     Blocks = Blocks - 1
                     Enemy_Health = HealthBar(0,0,Blocks)
                     Enemy_Health.Draw(self.Game_Screen)
+                    EnemyHit = False
             if Lazer.Y_pos <= 2:  
                 FireLazar = False
 
