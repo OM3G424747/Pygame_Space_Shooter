@@ -174,7 +174,7 @@ class Game:
             Enemy.Draw (self.Game_Screen) 
             
             if FireLazar == True:
-                if Lazer.X_pos >= Enemy.X_pos - 40 and Lazer.X_pos <= Enemy.X_pos + 115:
+                if Lazer.X_pos >= Enemy.X_pos - 60 and Lazer.X_pos <= Enemy.X_pos + 135 and Lazer.Y_pos >= Enemy.Y_pos:
                     Danger = True
                     Enemy.Panic(Danger, Screen_Width)
                 else:
