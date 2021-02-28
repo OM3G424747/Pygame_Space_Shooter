@@ -80,23 +80,44 @@ class NonPlayerCharacter(GameObject):
     
     #Speed = random.randint(5, 7) #program AI to change speed at random when fired at
     Speed = 5
+    Stop = 0
     def __init__ (self, image_path, X_pos, Y_pos, Width, Height):
        GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
     
-    def Move(self,game_screen): #moves non-player character from left to right based on the size of the game screen
-        if self.X_pos <= 10:
+    def Move(self, TargetX_Pos, TargetY_pos, game_screen): #moves non-player in the direction of the player's current location on the X axis 
+        self.Speed = 5 #reset Speed movement back to 5
+        if self.X_pos <=  TargetX_Pos - 10:
             self.Speed = abs(self.Speed)
-        elif self.X_pos >= game_screen - 80:
-            self.Speed = -abs(self.Speed)
-        self.X_pos += self.Speed  
+            self.X_pos += self.Speed #moves ship right if it's not in line
+            if self.X_pos >= TargetX_Pos -10:
+                self.X_pos += self.Stop #stops ship once it's lined up
 
-    def Panic(self, Danger, game_screen): #moves non-player character from left to right based on the size of the game screen
-        if Danger == True and self.Speed < 11:
-            if self.X_pos <= 10:
+        elif self.X_pos >= TargetX_Pos + 10: 
+            self.Speed = -abs(self.Speed)
+            self.X_pos += self.Speed #moves ship left if it's not in line
+            if self.X_pos >= TargetX_Pos +10: 
+                self.X_pos += self.Stop #stops ship once it's lined up
+         
+
+    def Panic(self, Danger, DangerX_pos, game_screen): #causes non-player character to move at a faster pace away from player's lazer to try and escape danger 
+        self.Speed = 4 #boosts movement speed 
+        DangerX_pos = DangerX_pos - 37 #Calibrates lazer Xpos to check with the center of the ship
+        if Danger == True:
+            if self.X_pos >= DangerX_pos: #Checks if enemy ship is to the right side of the Lazer and moves the ship right if it is 
                 self.Speed = abs(self.Speed)
-            elif self.X_pos >= game_screen - 80:
+                self.X_pos += self.Speed  
+                if self.X_pos >= game_screen - 80: 
+                    self.Speed = -abs(self.Speed)
+                    self.X_pos += self.Speed  
+            
+            elif self.X_pos <= DangerX_pos: #Checks if enemy ship is to the left side of the Lazer and moves the ship right if it is 
                 self.Speed = -abs(self.Speed)
-            self.X_pos += self.Speed + 1   
+                self.X_pos += self.Speed  
+                if self.X_pos <= 5:
+                    self.Speed = abs(self.Speed)
+                    self.X_pos += self.Speed  
+            #self.X_pos += self.Speed  
+     
 
 class HealthBar:
     FullColour = 255
@@ -153,6 +174,8 @@ class Game:
         Enemy_Health = HealthBar(0,0,Blocks)
         Player1_Health = HealthBar(0,770,Blocks)
         Danger = False
+        Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
+        
 
         while Is_Game_Over == False: #game loop checks if the game is over and will repeat until the condition is met and the game over state is set to True
             for event in pygame.event.get():
@@ -185,16 +208,20 @@ class Game:
             Enemy.Draw (self.Game_Screen) 
             
             if FireLazar == True:
-                if Lazer.X_pos >= Enemy.X_pos - 60 and Lazer.X_pos <= Enemy.X_pos + 135 and Lazer.Y_pos >= Enemy.Y_pos:
+                if Lazer.X_pos >= Enemy.X_pos - 65 and Lazer.X_pos <= Enemy.X_pos + 140 and Lazer.Y_pos >= Enemy.Y_pos:
                     Danger = True
-                    Enemy.Panic(Danger, Screen_Width)
-                else:
+                    if Random_Mistake >= 4:
+                        Danger = True
+                        Enemy.Panic(Danger,Lazer.X_pos, Screen_Width)
+                    if Random_Mistake <= 4:
+                        Danger = False
+                        Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
+                elif Lazer.X_pos <= Enemy.X_pos - 75 and Lazer.X_pos >= Enemy.X_pos + 150:
                     Danger = False
-            if Danger == False:
-                Enemy.Move(Screen_Width)
+                    Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
 
             else:
-                Enemy.Move(Screen_Width)
+                Enemy.Move( Player1.X_pos, Player1.Y_pos, Screen_Width)
             
             Player1_Health.Draw(self.Game_Screen)
             Enemy_Health.Draw(self.Game_Screen)
@@ -224,7 +251,7 @@ class Game:
                     Enemy_Lazer.Fire(EnemyLazar,"Down",Screen_Height, self.Game_Screen)
                     if Enemy_Lazer.Y_pos >= 730:
                         EnemyLazar = False #removes the lazer from the screen 
-                        
+                        Random_Mistake = random.randint(1,10) #Reset the Random int to give the AI a chance to mess up
                         LazerCount = 0 #removes the queued lazer so the AI can add another  
             
                 if Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == True: #Conditions for player taking damager by enemy ship
