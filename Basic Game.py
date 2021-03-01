@@ -139,7 +139,19 @@ class HealthBar:
     def Draw (self, Game_Screen):
         draw = pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.TotalBlocks,25]) #sets surface, colour and X-pos,Y-pos+size for the bar to be drawn.
 
+"""
+class Stars:
+    def __init__(self, TotalStars):
+        self.TotalStars = TotalStars
+        self.StarListX_pos = random.sample(range(1, 800), TotalStars)
+        self.StarListY_pos = random.sample(range(1, 800), TotalStars)
 
+    def Draw (self, X_Pos, Y_Pos, Game_Screen):
+        for i in range (self.TotalStars):
+            counter = 0
+            pygame.draw.circle(Game_Screen, Green_Colour, (self.StarListX_pos[counter],self.StarListY_pos[counter]), 2)
+            counter + 1
+"""
 
         
 class Game:
@@ -164,7 +176,13 @@ class Game:
         Blocks = 4 #Sets the number of hits the ships can take before it's game over
         EnemyHit = False #used to detect if the enemy ship is hit
         PlayerHit = False #used to detect if the player ship is hit
-
+        
+        TotalStars = 50 #  - USED TO Create randomly generated night sky
+        StarListX_pos = random.sample(range(1, 800), TotalStars+100) #  - USED TO Create randomly generated night sky
+        StarListY_pos = random.sample(range(1, 800), TotalStars+100) #  - USED TO Create randomly generated night sky
+        StarCounter = 0 #  - USED TO Create randomly generated night sky
+        
+    
         FireOkay = True
         Player1 = PlayerCharacter("ship.png", 660,600,75,75) #creates player 1 ship character 
         Enemy = NonPlayerCharacter("enemy.png",160,200,75,75)
@@ -178,8 +196,10 @@ class Game:
         Player1_Health.X_pos = Screen_Width - Blocks * Player1_Health.Chunks #sets initial starting postion of player healthbar so it's adjusted according to the number of blocks selected and the size of the chunks selected
         PlayerHealthBorder = NonPlayerCharacter("PlayerHealthBorder.png",620,740,180,55 ) 
         PlayerHealthCorner = NonPlayerCharacter("PlayerBorderCorner.png",Screen_Width - Blocks * Player1_Health.Chunks - 6 ,765,80,40 )
+        #StarsInSky = Stars(50)
         Danger = False
         Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
+        
         
 
         while Is_Game_Over == False: #game loop checks if the game is over and will repeat until the condition is met and the game over state is set to True
@@ -212,6 +232,12 @@ class Game:
             self.Game_Screen.fill(Black_Colour)
             Enemy.Draw (self.Game_Screen) 
             
+            #continue here - Create randomly generated stars 
+            pygame.draw.circle(self.Game_Screen, Green_Colour, (StarListX_pos[StarCounter],StarListY_pos[StarCounter]), 2)
+                
+
+                
+
             if FireLazar == True:
                 if Lazer.X_pos >= Enemy.X_pos - 65 and Lazer.X_pos <= Enemy.X_pos + 140 and Lazer.Y_pos >= Enemy.Y_pos: 
                     if Random_Mistake >= 4:
@@ -227,8 +253,7 @@ class Game:
             else:
                 Enemy.Move( Player1.X_pos, Player1.Y_pos, Screen_Width)
             
-            
-            
+           
             Player1_Health.Draw(self.Game_Screen)
             PlayerHealthBorder.Draw(self.Game_Screen)
             PlayerHealthCorner.Draw(self.Game_Screen)
