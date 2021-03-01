@@ -41,10 +41,10 @@ class PlayerCharacter(GameObject):
         elif X_direction < 0:
             self.X_pos = self.X_pos + self.Speed
         
-        if self.Y_pos >= Max_Height - 110: #sets collision detection for top and bottom of the screen for player to make sure they don't go over the health bar or off the screen 
-            self.Y_pos = Max_Height - 110
-        if self.Y_pos <= 5:
-            self.Y_pos = 5
+        if self.Y_pos >= Max_Height - 120: #sets collision detection for bottom of the screen for player to make sure they don't go over the health bar or off the screen 
+            self.Y_pos = Max_Height - 120
+        if self.Y_pos <= 50: #sets collision detection for top of the screen for player to make sure they don't go over the health bar or off the screen 
+            self.Y_pos = 50
         if self.X_pos >= Max_Width - 80:
             self.X_pos = Max_Width - 80
         if self.X_pos <= 5:
@@ -100,7 +100,7 @@ class NonPlayerCharacter(GameObject):
          
 
     def Panic(self, Danger, DangerX_pos, game_screen): #causes non-player character to move at a faster pace away from player's lazer to try and escape danger 
-        self.Speed = 4 #boosts movement speed 
+        self.Speed = 7 #boosts movement speed 
         DangerX_pos = DangerX_pos - 37 #Calibrates lazer Xpos to check with the center of the ship
         if Danger == True:
             if self.X_pos >= DangerX_pos: #Checks if enemy ship is to the right side of the Lazer and moves the ship right if it is 
@@ -161,7 +161,7 @@ class Game:
         LazerCount = 0
         FireLazar = False
         EnemyLazar = True
-        Blocks = 3
+        Blocks = 4 #Sets the number of hits the ships can take before it's game over
         EnemyHit = False #used to detect if the enemy ship is hit
         PlayerHit = False #used to detect if the player ship is hit
 
@@ -171,8 +171,13 @@ class Game:
         Lazer = LazerFire("Lazer.png",Player1.X_pos, Player1.Y_pos,10,60)
         Enemy_Lazer = LazerFire("Lazer2.png",Enemy.X_pos +35, Enemy.Y_pos,10,60)
         Explode = LazerFire ("boom.png",Enemy.X_pos -15, Enemy.Y_pos,75,75)
-        Enemy_Health = HealthBar(0,0,Blocks)
-        Player1_Health = HealthBar(0,770,Blocks)
+        Enemy_Health = HealthBar(10,0,Blocks)
+        EnemyHealthBorder = NonPlayerCharacter("EnemyHealthBorder.png",0,0,180,55 ) 
+        EnemyHealthCorner = NonPlayerCharacter("EnemyBorderCorner.png",Blocks * Enemy_Health.Chunks - 40,-10,80,40 )
+        Player1_Health = HealthBar(470,770,Blocks)
+        Player1_Health.X_pos = Screen_Width - Blocks * Player1_Health.Chunks #sets initial starting postion of player healthbar so it's adjusted according to the number of blocks selected and the size of the chunks selected
+        PlayerHealthBorder = NonPlayerCharacter("PlayerHealthBorder.png",620,740,180,55 ) 
+        PlayerHealthCorner = NonPlayerCharacter("PlayerBorderCorner.png",Screen_Width - Blocks * Player1_Health.Chunks - 6 ,765,80,40 )
         Danger = False
         Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
         
@@ -208,12 +213,11 @@ class Game:
             Enemy.Draw (self.Game_Screen) 
             
             if FireLazar == True:
-                if Lazer.X_pos >= Enemy.X_pos - 65 and Lazer.X_pos <= Enemy.X_pos + 140 and Lazer.Y_pos >= Enemy.Y_pos:
-                    Danger = True
+                if Lazer.X_pos >= Enemy.X_pos - 65 and Lazer.X_pos <= Enemy.X_pos + 140 and Lazer.Y_pos >= Enemy.Y_pos: 
                     if Random_Mistake >= 4:
                         Danger = True
                         Enemy.Panic(Danger,Lazer.X_pos, Screen_Width)
-                    if Random_Mistake <= 4:
+                    if Random_Mistake <= 4: #Sets Enemy AI's ability to make a random mistake and give the player an oppertunity to hit them (Value needs to be between 1 and 10. 2 = Hard and 9 = Easy )
                         Danger = False
                         Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
                 elif Lazer.X_pos <= Enemy.X_pos - 75 and Lazer.X_pos >= Enemy.X_pos + 150:
@@ -223,8 +227,14 @@ class Game:
             else:
                 Enemy.Move( Player1.X_pos, Player1.Y_pos, Screen_Width)
             
+            
+            
             Player1_Health.Draw(self.Game_Screen)
+            PlayerHealthBorder.Draw(self.Game_Screen)
+            PlayerHealthCorner.Draw(self.Game_Screen)
             Enemy_Health.Draw(self.Game_Screen)
+            EnemyHealthBorder.Draw(self.Game_Screen)
+            EnemyHealthCorner.Draw(self.Game_Screen)
             Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
             Player1.Draw (self.Game_Screen)
             if FireLazar == True:
@@ -251,7 +261,7 @@ class Game:
                     Enemy_Lazer.Fire(EnemyLazar,"Down",Screen_Height, self.Game_Screen)
                     if Enemy_Lazer.Y_pos >= 730:
                         EnemyLazar = False #removes the lazer from the screen 
-                        Random_Mistake = random.randint(1,10) #Reset the Random int to give the AI a chance to mess up
+                        Random_Mistake = random.randint(1,10) #Reset the Random int to give the AI a chance to mess up during their next shot. Only resets after enemy fire to avoid Enemy getting hit by "player lazer spam"
                         LazerCount = 0 #removes the queued lazer so the AI can add another  
             
                 if Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == True: #Conditions for player taking damager by enemy ship
@@ -264,6 +274,7 @@ class Game:
                     Player1_Health.DamageTaken = Player1_Health.DamageTaken + 1 #Adjusts he colour of the health bar by incrementing the damage taken for comparison to the initial chunks 
                     if Player1_Health.TotalBlocks > 1: #Temp argument to keep the game from crashing after the final shot is given 
                         Player1_Health.ColourAdjust(Blocks)
+                        Player1_Health.X_pos = Player1_Health.X_pos + Player1_Health.Chunks #Moves the player health bar to the right propotionately to the ammount that's been removed from it 
                     Player1_Health.Draw(self.Game_Screen)
                     PlayerHit = False
 
