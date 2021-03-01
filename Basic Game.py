@@ -9,7 +9,12 @@ Black_Colour = (0,0,0)
 Red_Colour = (255,0,0)
 Green_Colour = (0,255,0)
 Blue_Colour = (0,0,255)
+Grey_Colour = (100,100,100)
 Clock = pygame.time.Clock()
+
+TotalStars = 250 #  - USED TO Create randomly generated night sky
+StarListX_pos = random.sample(range(1, 800), TotalStars) #  - USED TO Create randomly generated night sky
+StarListY_pos = random.sample(range(1, 800), TotalStars) #  - USED TO Create randomly generated night sky
 
 
 class GameObject: #class for defining game objects that will be drawn onto the game screen and moved arround
@@ -177,9 +182,7 @@ class Game:
         EnemyHit = False #used to detect if the enemy ship is hit
         PlayerHit = False #used to detect if the player ship is hit
         
-        TotalStars = 50 #  - USED TO Create randomly generated night sky
-        StarListX_pos = random.sample(range(1, 800), TotalStars+100) #  - USED TO Create randomly generated night sky
-        StarListY_pos = random.sample(range(1, 800), TotalStars+100) #  - USED TO Create randomly generated night sky
+        
         StarCounter = 0 #  - USED TO Create randomly generated night sky
         
     
@@ -230,13 +233,11 @@ class Game:
 
                 print(event)
             self.Game_Screen.fill(Black_Colour)
-            Enemy.Draw (self.Game_Screen) 
-            
-            #continue here - Create randomly generated stars 
-            pygame.draw.circle(self.Game_Screen, Green_Colour, (StarListX_pos[StarCounter],StarListY_pos[StarCounter]), 2)
-                
+            for i in range (len(StarListX_pos)): #used to generate stars
+                pygame.draw.circle(self.Game_Screen, Grey_Colour, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
 
-                
+            Enemy.Draw (self.Game_Screen) 
+         
 
             if FireLazar == True:
                 if Lazer.X_pos >= Enemy.X_pos - 65 and Lazer.X_pos <= Enemy.X_pos + 140 and Lazer.Y_pos >= Enemy.Y_pos: 
@@ -302,6 +303,20 @@ class Game:
                         Player1_Health.X_pos = Player1_Health.X_pos + Player1_Health.Chunks #Moves the player health bar to the right propotionately to the ammount that's been removed from it 
                     Player1_Health.Draw(self.Game_Screen)
                     PlayerHit = False
+
+                if Player1.X_pos >= Enemy.X_pos - 50 and Player1.X_pos <= Enemy.X_pos + 75 and Player1.Y_pos >= Enemy.Y_pos - 60 and Player1.Y_pos <= Enemy.Y_pos + 65: #Checks if the ships collide, numbers adjust to accomodate the shpe and size of the sprites
+                    Explode.Y_pos = Player1.Y_pos
+                    Explode.X_pos = Player1.X_pos
+                    Explode.Draw (self.Game_Screen)
+                    Explode.Y_pos = Enemy.Y_pos
+                    Explode.X_pos = Enemy.X_pos
+                    Explode.Draw (self.Game_Screen)
+                    Player1_Health.TotalBlocks = Player1_Health.TotalBlocks - Player1_Health.Chunks
+                    Player1_Health.DamageTaken = Player1_Health.DamageTaken + 1 #Adjusts he colour of the health bar by incrementing the damage taken for comparison to the initial chunks 
+                    if Player1_Health.TotalBlocks > 1: #Temp argument to keep the game from crashing after the final shot is given 
+                        Player1_Health.ColourAdjust(Blocks)
+                    Player1_Health.Draw(self.Game_Screen)
+                    
 
             elif Player1.X_pos - 35 <= Enemy.X_pos and Player1.X_pos + 25 >= Enemy.X_pos: #Used to queue lazer fire with the AI
                 Enemy_Lazer.Y_pos = Enemy.Y_pos
