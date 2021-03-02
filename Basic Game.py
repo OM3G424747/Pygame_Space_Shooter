@@ -143,22 +143,22 @@ class HealthBar:
             self.colour = (red,green,0)
      
     def Draw (self, Game_Screen):
-        draw = pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.TotalBlocks,25]) #sets surface, colour and X-pos,Y-pos+size for the bar to be drawn.
+        pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.TotalBlocks,25]) #sets surface, colour and X-pos,Y-pos+size for the bar to be drawn.
 
-"""
-class Stars:
-    def __init__(self, TotalStars):
-        self.TotalStars = TotalStars
-        self.StarListX_pos = random.sample(range(1, 800), TotalStars)
-        self.StarListY_pos = random.sample(range(1, 800), TotalStars)
-
-    def Draw (self, X_Pos, Y_Pos, Game_Screen):
-        for i in range (self.TotalStars):
-            counter = 0
-            pygame.draw.circle(Game_Screen, Green_Colour, (self.StarListX_pos[counter],self.StarListY_pos[counter]), 2)
-            counter + 1
-"""
-
+class LazarBar:
+    Length = 120 
+    def __init__ (self ,X_pos ,Y_pos ,CurrentLazarY_pos, EndPos, Colour):
+        self.X_pos = X_pos
+        self.Y_pos = Y_pos
+        self.EndPos = EndPos
+        self.colour = Colour
+        self.Chunks = self.EndPos / CurrentLazarY_pos
+        self.StartPos = CurrentLazarY_pos
+        
+        
+    def Draw (self, CurrentLazerY_pos ,Game_Screen):
+        self.TotalLength = CurrentLazerY_pos / self.EndPos * self.Length
+        pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.TotalLength,25])
         
 class Game:
     Tick_Rate = 60 #Change to set framerate
@@ -202,7 +202,7 @@ class Game:
         PlayerHealthCorner = NonPlayerCharacter("PlayerBorderCorner.png",Screen_Width - Blocks * Player1_Health.Chunks - 6 ,765,80,40 )
         EnemyLazarHud = NonPlayerCharacter("EnemyLazerHud.png",EnemyHealthCorner.X_pos + 100, EnemyHealthBorder.Y_pos, 140,30)
         EnemyLazarStatus = NonPlayerCharacter(EnemyLazarStatusPNG,EnemyLazarHud.X_pos + 150, EnemyHealthBorder.Y_pos, 120,30)
-        #StarsInSky = Stars(50)
+        EnemyCharge = LazarBar(EnemyLazarHud.X_pos + 150 ,EnemyHealthBorder.Y_pos ,Enemy_Lazer.X_pos, 730, Red_Colour)
         Danger = False
         Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
         
@@ -295,6 +295,8 @@ class Game:
                 EnemyLazar = True #sets coditions to True for enemy lazer fire
                 if EnemyLazar == True : 
                     Enemy_Lazer.Fire(EnemyLazar,"Down",Screen_Height, self.Game_Screen)
+                    EnemyCharge.Draw(Enemy_Lazer.Y_pos ,self.Game_Screen)
+
                     if Enemy_Lazer.Y_pos >= 730:
                         EnemyLazar = False #removes the lazer from the screen 
                         Random_Mistake = random.randint(1,10) #Reset the Random int to give the AI a chance to mess up during their next shot. Only resets after enemy fire to avoid Enemy getting hit by "player lazer spam"
