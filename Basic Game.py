@@ -10,6 +10,7 @@ Red_Colour = (255,0,0)
 Green_Colour = (0,255,0)
 Blue_Colour = (0,0,255)
 Grey_Colour = (100,100,100)
+LightGrey_Colour = (200,200,200)
 Clock = pygame.time.Clock()
 
 TotalStars = 250 #  - USED TO Create randomly generated night sky
@@ -177,11 +178,11 @@ class Game:
         X_direction = 0
         LazerCount = 0
         FireLazar = False
-        EnemyLazar = True
+        EnemyLazar = False
         Blocks = 4 #Sets the number of hits the ships can take before it's game over
         EnemyHit = False #used to detect if the enemy ship is hit
         PlayerHit = False #used to detect if the player ship is hit
-        
+        EnemyLazarStatusPNG = "EnemyLazerReadyStatus.png"
         
         StarCounter = 0 #  - USED TO Create randomly generated night sky
         
@@ -199,6 +200,8 @@ class Game:
         Player1_Health.X_pos = Screen_Width - Blocks * Player1_Health.Chunks #sets initial starting postion of player healthbar so it's adjusted according to the number of blocks selected and the size of the chunks selected
         PlayerHealthBorder = NonPlayerCharacter("PlayerHealthBorder.png",620,740,180,55 ) 
         PlayerHealthCorner = NonPlayerCharacter("PlayerBorderCorner.png",Screen_Width - Blocks * Player1_Health.Chunks - 6 ,765,80,40 )
+        EnemyLazarHud = NonPlayerCharacter("EnemyLazerHud.png",EnemyHealthCorner.X_pos + 100, EnemyHealthBorder.Y_pos, 140,30)
+        EnemyLazarStatus = NonPlayerCharacter(EnemyLazarStatusPNG,EnemyLazarHud.X_pos + 150, EnemyHealthBorder.Y_pos, 120,30)
         #StarsInSky = Stars(50)
         Danger = False
         Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
@@ -233,8 +236,11 @@ class Game:
 
                 print(event)
             self.Game_Screen.fill(Black_Colour)
-            for i in range (len(StarListX_pos)): #used to generate stars
-                pygame.draw.circle(self.Game_Screen, Grey_Colour, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
+            for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
+                fickercolour = random.randint(110,200) #used to make the stars flicker
+                flickerstar = (fickercolour,fickercolour,fickercolour) #sets new colour for the specified star in the loop
+                pygame.draw.circle(self.Game_Screen, flickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
+             
 
             Enemy.Draw (self.Game_Screen) 
          
@@ -261,8 +267,11 @@ class Game:
             Enemy_Health.Draw(self.Game_Screen)
             EnemyHealthBorder.Draw(self.Game_Screen)
             EnemyHealthCorner.Draw(self.Game_Screen)
+            EnemyLazarHud.Draw(self.Game_Screen)
+             
             Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
             Player1.Draw (self.Game_Screen)
+
             if FireLazar == True:
                 Lazer.Fire(FireLazar,"Up",Screen_Height, self.Game_Screen)
                 if Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == True:
@@ -280,7 +289,8 @@ class Game:
             if Lazer.Y_pos <= 2:  
                 FireLazar = False
 
-        
+            if EnemyLazar == False:
+                EnemyLazarStatus.Draw(self.Game_Screen)  
             if LazerCount == 1: #detects if lazer fire was queued by the AI due to the player being in range
                 EnemyLazar = True #sets coditions to True for enemy lazer fire
                 if EnemyLazar == True : 
@@ -288,7 +298,8 @@ class Game:
                     if Enemy_Lazer.Y_pos >= 730:
                         EnemyLazar = False #removes the lazer from the screen 
                         Random_Mistake = random.randint(1,10) #Reset the Random int to give the AI a chance to mess up during their next shot. Only resets after enemy fire to avoid Enemy getting hit by "player lazer spam"
-                        LazerCount = 0 #removes the queued lazer so the AI can add another  
+                        LazerCount = 0 #removes the queued lazer so the AI can add another
+                       
             
                 if Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == True: #Conditions for player taking damager by enemy ship
                     Explode.Y_pos = Player1.Y_pos
