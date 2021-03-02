@@ -156,9 +156,14 @@ class LazarBar:
         self.StartPos = CurrentLazarY_pos
         
         
-    def Draw (self, CurrentLazerY_pos ,Game_Screen):
-        self.TotalLength = CurrentLazerY_pos / self.EndPos * self.Length
-        pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.TotalLength,25])
+    def EnemyDraw (self, CurrentLazerY_pos ,Game_Screen):
+        EnemyTotalLength = CurrentLazerY_pos / self.EndPos * self.Length 
+        pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,EnemyTotalLength,25])
+
+    def PlayerDraw (self, CurrentLazerY_pos ,Game_Screen):
+        TotalLength = CurrentLazerY_pos / self.StartPos * self.Length
+        self.PlayerTotalLength = self.Length - TotalLength
+        pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.PlayerTotalLength,25])
         
 class Game:
     Tick_Rate = 60 #Change to set framerate
@@ -167,13 +172,15 @@ class Game:
         self.title = title
         self.width = width
         self.height = height 
-
         self.Game_Screen = pygame.display.set_mode((width, height)) #Creates the window being displayed 
         self.Game_Screen.fill(Black_Colour) #Sets the default colour of the displayed window 
         pygame.display.set_caption(title)
     
+    
     def run_game_loop (self):
         Is_Game_Over = False
+        PlayerWon = False
+        CPUWon = False
         Y_direction = 0
         X_direction = 0
         LazerCount = 0
@@ -183,9 +190,9 @@ class Game:
         EnemyHit = False #used to detect if the enemy ship is hit
         PlayerHit = False #used to detect if the player ship is hit
         EnemyLazarStatusPNG = "EnemyLazerReadyStatus.png"
-        
-        StarCounter = 0 #  - USED TO Create randomly generated night sky
-        
+        Danger = False
+        Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
+    
     
         FireOkay = True
         Player1 = PlayerCharacter("ship.png", 660,600,75,75) #creates player 1 ship character 
@@ -203,8 +210,12 @@ class Game:
         EnemyLazarHud = NonPlayerCharacter("EnemyLazerHud.png",EnemyHealthCorner.X_pos + 100, EnemyHealthBorder.Y_pos, 140,30)
         EnemyLazarStatus = NonPlayerCharacter(EnemyLazarStatusPNG,EnemyLazarHud.X_pos + 150, EnemyHealthBorder.Y_pos, 120,30)
         EnemyCharge = LazarBar(EnemyLazarHud.X_pos + 150 ,EnemyHealthBorder.Y_pos ,Enemy_Lazer.X_pos, 730, Red_Colour)
-        Danger = False
-        Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
+        PlayerLazarHud = NonPlayerCharacter("PlayerLazerHud.png",PlayerHealthCorner.X_pos - 290, PlayerHealthBorder.Y_pos + 25, 140,30)
+        PlayerLazarStatus = NonPlayerCharacter("PlayerLazerReadyStatus.png",PlayerLazarHud.X_pos + 150, PlayerLazarHud.Y_pos, 120,30)
+        PlayerCharge = LazarBar(PlayerLazarHud.X_pos + 150, PlayerLazarHud.Y_pos ,Lazer.X_pos, 2, Blue_Colour)
+        GameOverScreen = NonPlayerCharacter("GameOver.png", 100, 300, 600, 200)
+        WinScreen = NonPlayerCharacter("win.png", 100, 300, 600, 200)
+        
         
         
 
@@ -232,7 +243,25 @@ class Game:
                             FireLazar = True
                             Lazer.Y_pos = Player1.Y_pos
                             Lazer.X_pos = Player1.X_pos + 32
+
+            if Player1_Health.DamageTaken == 4: #sets the number of shots the player can take before it's game over
+                CPUWon = True
+                Is_Game_Over = True
+                self.Game_Screen.fill(Black_Colour)
+                GameOverScreen.Draw(self.Game_Screen)
+                pygame.display.update() #Updates the current frame after completing the loop
+                Clock.tick(0.15)
+                break
               
+                
+            elif Enemy_Health.DamageTaken == 5: #sets the number of shots the enemy can take before it's game over
+                PlayerWon = True  
+                Is_Game_Over = True
+                self.Game_Screen.fill(Black_Colour)
+                WinScreen.Draw(self.Game_Screen)
+                pygame.display.update() #Updates the current frame after completing the loop
+                Clock.tick(0.25)
+                break
 
                 print(event)
             self.Game_Screen.fill(Black_Colour)
@@ -243,9 +272,9 @@ class Game:
              
 
             Enemy.Draw (self.Game_Screen) 
-         
+            
 
-            if FireLazar == True:
+            if FireLazar == True: #Enemy AI conditions used to check if the player has fired their lazer
                 if Lazer.X_pos >= Enemy.X_pos - 65 and Lazer.X_pos <= Enemy.X_pos + 140 and Lazer.Y_pos >= Enemy.Y_pos: 
                     if Random_Mistake >= 4:
                         Danger = True
@@ -256,7 +285,6 @@ class Game:
                 elif Lazer.X_pos <= Enemy.X_pos - 75 and Lazer.X_pos >= Enemy.X_pos + 150:
                     Danger = False
                     Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
-
             else:
                 Enemy.Move( Player1.X_pos, Player1.Y_pos, Screen_Width)
             
@@ -268,12 +296,15 @@ class Game:
             EnemyHealthBorder.Draw(self.Game_Screen)
             EnemyHealthCorner.Draw(self.Game_Screen)
             EnemyLazarHud.Draw(self.Game_Screen)
+            PlayerLazarHud.Draw(self.Game_Screen)
              
             Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
             Player1.Draw (self.Game_Screen)
 
+            
             if FireLazar == True:
-                Lazer.Fire(FireLazar,"Up",Screen_Height, self.Game_Screen)
+                Lazer.Fire(FireLazar,"Up",Screen_Height, self.Game_Screen)    
+                PlayerCharge.PlayerDraw(Lazer.Y_pos ,self.Game_Screen)
                 if Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == True:
                     Explode.Y_pos = Enemy.Y_pos
                     Explode.X_pos = Enemy.X_pos
@@ -286,8 +317,10 @@ class Game:
                         Enemy_Health.ColourAdjust(Blocks)
                     Enemy_Health.Draw(self.Game_Screen)
                     EnemyHit = False
-            if Lazer.Y_pos <= 2:  
+            if Lazer.Y_pos <= 25:  
                 FireLazar = False
+            if FireLazar == False:
+                PlayerLazarStatus.Draw(self.Game_Screen)
 
             if EnemyLazar == False:
                 EnemyLazarStatus.Draw(self.Game_Screen)  
@@ -295,7 +328,7 @@ class Game:
                 EnemyLazar = True #sets coditions to True for enemy lazer fire
                 if EnemyLazar == True : 
                     Enemy_Lazer.Fire(EnemyLazar,"Down",Screen_Height, self.Game_Screen)
-                    EnemyCharge.Draw(Enemy_Lazer.Y_pos ,self.Game_Screen)
+                    EnemyCharge.EnemyDraw(Enemy_Lazer.Y_pos ,self.Game_Screen)
 
                     if Enemy_Lazer.Y_pos >= 730:
                         EnemyLazar = False #removes the lazer from the screen 
@@ -336,10 +369,11 @@ class Game:
                 Enemy_Lazer.X_pos = Enemy.X_pos + 35
                 LazerCount = 1 #Queued lazer fire with the AI
 
-             
                       
-                 
-         
+                if CPUWon == True:         
+                    self.Game_Screen.fill(Black_Colour)
+                    GameOverScreen.Draw(self.Game_Screen)
+            
 
             pygame.display.update() #Updates the current frame after completing the loop
             Clock.tick(self.Tick_Rate) #Sets the frame rate per second
