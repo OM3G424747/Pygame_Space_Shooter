@@ -1,3 +1,20 @@
+"""
+This Game was created as part of a homework assignment for importing on pirple.com 
+
+Make sure you install python3.6 with the "Add python 3.6 to PATH" option selected. This means that python, and pip will work for you from the command line.
+PLEASE INSTALL PYGAME in your python scripts folder using "pip install" before running!
+There is documentation with python for the "windows installation steps"
+
+to do so please follow these instructions:
+1. Start by opening a command line. You can do this by pressing the windows key and then typing cmd and then pressing enter.
+2. Put in the following code into the command line:
+
+py -m pip install -U pygame==1.9.6 --user
+
+3. If it succeeds, make sure to restart any IDLE windows you have open before running this game.
+
+"""
+
 import pygame
 import random
 
@@ -263,7 +280,7 @@ class Game:
                 Clock.tick(0.25)
                 break
 
-                print(event)
+                #print(event) - remove as comment to see current events being logged 
             self.Game_Screen.fill(Black_Colour)
             for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
                 fickercolour = random.randint(110,200) #used to make the stars flicker
