@@ -111,7 +111,7 @@ class NonPlayerCharacter(GameObject):
        GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
     
     def Move(self, TargetX_Pos, TargetY_pos, game_screen): #moves non-player in the direction of the player's current location on the X axis 
-        self.Speed = 5 #reset Speed movement back to 5
+        self.Speed = 4 #reset Speed movement back to 5
         if self.X_pos <=  TargetX_Pos - 10:
             self.Speed = abs(self.Speed)
             self.X_pos += self.Speed #moves ship right if it's not in line
@@ -126,23 +126,25 @@ class NonPlayerCharacter(GameObject):
          
 
     def Panic(self, Danger, DangerX_pos, game_screen): #causes non-player character to move at a faster pace away from player's lazer to try and escape danger 
-        self.Speed = 7 #boosts movement speed 
-        DangerX_pos = DangerX_pos - 37 #Calibrates lazer Xpos to check with the center of the ship
-        if Danger == True:
-            if self.X_pos >= DangerX_pos: #Checks if enemy ship is to the right side of the Lazer and moves the ship right if it is 
+        self.Speed = 6 #boosts movement speed 
+        DangerX_pos = DangerX_pos - 35 #Calibrates lazer Xpos to check with the center of the ship
+        if Danger == True and self.X_pos <= DangerX_pos: #Checks if enemy ship is to the left side of the Lazer and moves the ship right if it is 
+            if self.X_pos <= 10:
                 self.Speed = abs(self.Speed)
-                self.X_pos += self.Speed  
-                if self.X_pos >= game_screen - 80: 
-                    self.Speed = -abs(self.Speed)
-                    self.X_pos += self.Speed  
-            
-            elif self.X_pos <= DangerX_pos: #Checks if enemy ship is to the left side of the Lazer and moves the ship right if it is 
+                self.X_pos += self.Speed
+            else:
                 self.Speed = -abs(self.Speed)
-                self.X_pos += self.Speed  
-                if self.X_pos <= 5:
-                    self.Speed = abs(self.Speed)
-                    self.X_pos += self.Speed  
-            #self.X_pos += self.Speed  
+                self.X_pos += self.Speed 
+        
+        elif Danger == True and self.X_pos >= DangerX_pos: #Checks if enemy ship is to the right side of the Lazer and moves the ship right if it is 
+            if self.X_pos > game_screen - 120: 
+                self.Speed = -abs(self.Speed)
+                self.X_pos += self.Speed
+            elif self.X_pos < game_screen - 120: #enemy glitch  - bouncing between points - bug fix needed
+                self.Speed = abs(self.Speed)
+                self.X_pos += self.Speed
+            
+        
      
 
 class HealthBar:
@@ -295,14 +297,14 @@ class Game:
             
 
             if FireLazar == True: #Enemy AI conditions used to check if the player has fired their lazer
-                if Lazer.X_pos >= Enemy.X_pos - 65 and Lazer.X_pos <= Enemy.X_pos + 140 and Lazer.Y_pos >= Enemy.Y_pos + 100: 
-                    if Random_Mistake >= 5:
+                if Lazer.X_pos >= Enemy.X_pos - 10 and Lazer.X_pos <= Enemy.X_pos + 85 and Lazer.Y_pos >= Enemy.Y_pos + 80: 
+                    if Random_Mistake <= 9:
                         Danger = True
                         Enemy.Panic(Danger,Lazer.X_pos, Screen_Width)
-                    if Random_Mistake <= 5: #Sets Enemy AI's ability to make a random mistake and give the player an oppertunity to hit them (Value needs to be between 1 and 10. 2 = Hard and 9 = Easy )
+                    elif Random_Mistake > 9: #Sets Enemy AI's ability to make a random mistake and give the player an oppertunity to hit them (Value needs to be between 1 and 10. 1 = Easy and 10 = Hard )
                         Danger = False
                         Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
-                if Lazer.X_pos <= Enemy.X_pos - 75 or Lazer.X_pos >= Enemy.X_pos + 150:
+                elif Lazer.X_pos <= Enemy.X_pos - 75 or Lazer.X_pos >= Enemy.X_pos + 150:
                     Danger = False
                     Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
             else:
