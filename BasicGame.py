@@ -14,6 +14,9 @@ py -m pip install -U pygame==1.9.6 --user
 3. If it succeeds, make sure to restart any IDLE windows you have open before running this game.
 
 """
+#TO DO LIST:
+# 1 - Create a 3rd Enemy state where the enemy attempts to move away from the player
+# 2 - Use the 3rd state to attempt to trick the player into flying into enemy fire 
 
 import pygame
 import random
@@ -292,14 +295,14 @@ class Game:
             
 
             if FireLazar == True: #Enemy AI conditions used to check if the player has fired their lazer
-                if Lazer.X_pos >= Enemy.X_pos - 65 and Lazer.X_pos <= Enemy.X_pos + 140 and Lazer.Y_pos >= Enemy.Y_pos: 
-                    if Random_Mistake >= 4:
+                if Lazer.X_pos >= Enemy.X_pos - 65 and Lazer.X_pos <= Enemy.X_pos + 140 and Lazer.Y_pos >= Enemy.Y_pos + 100: 
+                    if Random_Mistake >= 5:
                         Danger = True
                         Enemy.Panic(Danger,Lazer.X_pos, Screen_Width)
-                    if Random_Mistake <= 4: #Sets Enemy AI's ability to make a random mistake and give the player an oppertunity to hit them (Value needs to be between 1 and 10. 2 = Hard and 9 = Easy )
+                    if Random_Mistake <= 5: #Sets Enemy AI's ability to make a random mistake and give the player an oppertunity to hit them (Value needs to be between 1 and 10. 2 = Hard and 9 = Easy )
                         Danger = False
                         Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
-                elif Lazer.X_pos <= Enemy.X_pos - 75 and Lazer.X_pos >= Enemy.X_pos + 150:
+                if Lazer.X_pos <= Enemy.X_pos - 75 or Lazer.X_pos >= Enemy.X_pos + 150:
                     Danger = False
                     Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
             else:
