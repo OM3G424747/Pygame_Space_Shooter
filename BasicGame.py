@@ -57,18 +57,30 @@ class PlayerCharacter(GameObject):
     def __init__ (self, image_path, X_pos, Y_pos, Width, Height):
        GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
     
-    def Move(self, X_direction, Y_direction, Max_Height, Max_Width):
-        if Y_direction > 0:
+    def Move(self, X_direction, Y_direction, Max_Height, Max_Width): #Checks input for player
+        if Y_direction > 0 and X_direction == 0:
             self.Y_pos = self.Y_pos - self.Speed #used to make the Ship go up
-        elif Y_direction < 0:
+        elif Y_direction > 0 and X_direction > 0: #Up and left combined (Combined movement devided to match regular speed)
+            self.Y_pos = self.Y_pos - self.Speed /1.5
+            self.X_pos = self.X_pos - self.Speed /1.5
+        elif Y_direction > 0 and X_direction < 0: #Up and right combined (Combined movement devided to match regular speed)
+            self.Y_pos = self.Y_pos - self.Speed /1.5
+            self.X_pos = self.X_pos + self.Speed /1.5
+
+        elif Y_direction < 0 and X_direction == 0:
             self.Y_pos = self.Y_pos + self.Speed #used to make the Ship go down
-        elif X_direction > 0:
+        elif Y_direction < 0 and X_direction > 0: #Down and left combined (Combined movement devided to match regular speed)
+            self.Y_pos = self.Y_pos + self.Speed /1.5
+            self.X_pos = self.X_pos - self.Speed /1.5
+        elif Y_direction < 0 and X_direction < 0: #Down and right combined (Combined movement devided to match regular speed)
+            self.Y_pos = self.Y_pos + self.Speed /1.5 
+            self.X_pos = self.X_pos + self.Speed /1.5 
+
+        elif X_direction > 0 and Y_direction == 0:
             self.X_pos = self.X_pos - self.Speed #used to make the Ship go left
-        elif X_direction < 0:
+        elif X_direction < 0 and Y_direction == 0:
             self.X_pos = self.X_pos + self.Speed #used to make the Ship go right 
-            if X_direction < 0 and Y_direction < 0:
-                self.X_pos = self.X_pos + self.Speed
-                self.Y_pos = self.Y_pos + self.Speed
+           
         
         if self.Y_pos >= Max_Height - 120: #sets collision detection for bottom of the screen for player to make sure they don't go over the health bar or off the screen 
             self.Y_pos = Max_Height - 120
@@ -250,27 +262,36 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     Is_Game_Over = True
-                elif event.type == pygame.KEYDOWN: #Checks when the up or down key is pressed by the user 
-                    
-                        
-                    if event.key == pygame.K_UP and pygame.K_LEFT: #modify to include diagonal movement 
+                
+                keys = pygame.key.get_pressed()
+
+                if keys[pygame.K_UP] == True: #Checks for Up arrow key
+                    Y_direction = 1
+                    if keys[pygame.K_UP] == True and keys[pygame.K_LEFT] == True: #Checks for combined Up and Left arrow key 
                         Y_direction = 1
                         X_direction = 1
-                        if event.key == pygame.K_UP and event.key != pygame.K_LEFT:
-                            Y_direction = 1
-
-                    elif event.key == pygame.K_DOWN:
-                        Y_direction = -1 
-                    elif event.key == pygame.K_LEFT:
-                        X_direction = 1
-                    elif event.key == pygame.K_RIGHT:
+                    elif keys[pygame.K_UP] == True and keys[pygame.K_RIGHT] == True: #Checks for combined Up and Right arrow key 
+                        Y_direction = 1
                         X_direction = -1
-                elif event.type == pygame.KEYUP: #Checks when the key is released 
-                    if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                        Y_direction = 0
-                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_LEFT:
-                        X_direction = 0
-                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+                elif keys[pygame.K_DOWN] == True: #Checks for Down arrow key
+                    Y_direction = -1
+                    if keys[pygame.K_DOWN] == True and keys[pygame.K_LEFT] == True: #Checks for combined Down and Left arrow key 
+                        Y_direction = -1
+                        X_direction = 1
+                    elif keys[pygame.K_DOWN] == True and keys[pygame.K_RIGHT] == True: #Checks for combined Down and Right arrow key 
+                        Y_direction = -1
+                        X_direction = -1
+                elif keys[pygame.K_RIGHT] == True: #Checks for Right arrow key
+                    X_direction = -1
+                elif keys[pygame.K_LEFT] == True: #Checks for Left arrow key
+                    X_direction = 1
+
+                #reduces direction to 0 after keys are released        
+                elif keys[pygame.K_UP] == False or keys[pygame.K_LEFT] == False or keys[pygame.K_RIGHT] == False or keys[pygame.K_DOWN]:
+                    Y_direction = 0
+                    X_direction = 0
+                
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: #Checks for space bar being pressed to fire lazer 
                     if event.key == pygame.K_SPACE:
                         if FireLazar == False:
                             FireLazar = True
