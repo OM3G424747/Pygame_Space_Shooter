@@ -59,13 +59,16 @@ class PlayerCharacter(GameObject):
     
     def Move(self, X_direction, Y_direction, Max_Height, Max_Width):
         if Y_direction > 0:
-            self.Y_pos = self.Y_pos - self.Speed 
+            self.Y_pos = self.Y_pos - self.Speed #used to make the Ship go up
         elif Y_direction < 0:
-            self.Y_pos = self.Y_pos + self.Speed
+            self.Y_pos = self.Y_pos + self.Speed #used to make the Ship go down
         elif X_direction > 0:
-            self.X_pos = self.X_pos - self.Speed
+            self.X_pos = self.X_pos - self.Speed #used to make the Ship go left
         elif X_direction < 0:
-            self.X_pos = self.X_pos + self.Speed
+            self.X_pos = self.X_pos + self.Speed #used to make the Ship go right 
+            if X_direction < 0 and Y_direction < 0:
+                self.X_pos = self.X_pos + self.Speed
+                self.Y_pos = self.Y_pos + self.Speed
         
         if self.Y_pos >= Max_Height - 120: #sets collision detection for bottom of the screen for player to make sure they don't go over the health bar or off the screen 
             self.Y_pos = Max_Height - 120
@@ -107,6 +110,7 @@ class NonPlayerCharacter(GameObject):
     #Speed = random.randint(5, 7) #program AI to change speed at random when fired at
     Speed = 5
     Stop = 0
+    Away_From_Border = 150 #used to check if enemy ship is away from the border to help clear it from moving into the border
     def __init__ (self, image_path, X_pos, Y_pos, Width, Height):
        GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
     
@@ -128,8 +132,9 @@ class NonPlayerCharacter(GameObject):
     def Panic(self, Danger, DangerX_pos, game_screen): #causes non-player character to move at a faster pace away from player's lazer to try and escape danger 
         self.Speed = 6 #boosts movement speed 
         DangerX_pos = DangerX_pos - 35 #Calibrates lazer Xpos to check with the center of the ship
+
         if Danger == True and self.X_pos <= DangerX_pos: #Checks if enemy ship is to the left side of the Lazer and moves the ship right if it is 
-            if self.X_pos <= 10:
+            if self.X_pos <= self.Away_From_Border and DangerX_pos < self.Away_From_Border:
                 self.Speed = abs(self.Speed)
                 self.X_pos += self.Speed
             else:
@@ -137,10 +142,10 @@ class NonPlayerCharacter(GameObject):
                 self.X_pos += self.Speed 
         
         elif Danger == True and self.X_pos >= DangerX_pos: #Checks if enemy ship is to the right side of the Lazer and moves the ship right if it is 
-            if self.X_pos > game_screen - 120: 
+            if self.X_pos > game_screen - self.Away_From_Border and DangerX_pos > game_screen - self.Away_From_Border: 
                 self.Speed = -abs(self.Speed)
                 self.X_pos += self.Speed
-            elif self.X_pos < game_screen - 120: #enemy glitch  - bouncing between points - bug fix needed
+            elif self.X_pos < game_screen - self.Away_From_Border: 
                 self.Speed = abs(self.Speed)
                 self.X_pos += self.Speed
             
@@ -246,8 +251,14 @@ class Game:
                 if event.type == pygame.QUIT:
                     Is_Game_Over = True
                 elif event.type == pygame.KEYDOWN: #Checks when the up or down key is pressed by the user 
-                    if event.key == pygame.K_UP:
+                    
+                        
+                    if event.key == pygame.K_UP and pygame.K_LEFT: #modify to include diagonal movement 
                         Y_direction = 1
+                        X_direction = 1
+                        if event.key == pygame.K_UP and event.key != pygame.K_LEFT:
+                            Y_direction = 1
+
                     elif event.key == pygame.K_DOWN:
                         Y_direction = -1 
                     elif event.key == pygame.K_LEFT:
