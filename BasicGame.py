@@ -127,7 +127,7 @@ class NonPlayerCharacter(GameObject):
        GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
     
     def Move(self, TargetX_Pos, TargetY_pos, game_screen): #moves non-player in the direction of the player's current location on the X axis 
-        self.Speed = 4 #reset Speed movement back to 5
+        self.Speed = 4 #reset Speed movement back 
         if self.X_pos <=  TargetX_Pos - 10:
             self.Speed = abs(self.Speed)
             self.X_pos += self.Speed #moves ship right if it's not in line
@@ -140,9 +140,13 @@ class NonPlayerCharacter(GameObject):
             if self.X_pos >= TargetX_Pos +10: 
                 self.X_pos += self.Stop #stops ship once it's lined up
          
+    def LurePlayer (self,NewMoveX_pos,NewMoveY_pos): #creat a function to make the AI lure the player to attempt to attack it
+        pass
+
+
 
     def Panic(self, Danger, DangerX_pos, game_screen): #causes non-player character to move at a faster pace away from player's lazer to try and escape danger 
-        self.Speed = 6 #boosts movement speed 
+        self.Speed = 6 #boosts movement speed when it panic mode
         DangerX_pos = DangerX_pos - 35 #Calibrates lazer Xpos to check with the center of the ship
 
         if Danger == True and self.X_pos <= DangerX_pos: #Checks if enemy ship is to the left side of the Lazer and moves the ship right if it is 
