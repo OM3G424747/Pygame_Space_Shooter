@@ -224,6 +224,8 @@ class Game:
         Is_Game_Over = False
         PlayerWon = False
         CPUWon = False
+        Menu = True
+        Fight = False
         Y_direction = 0
         X_direction = 0
         LazerCount = 0
@@ -302,7 +304,14 @@ class Game:
                             Lazer.Y_pos = Player1.Y_pos
                             Lazer.X_pos = Player1.X_pos + 32
 
-            if Player1_Health.DamageTaken == 4: #sets the number of shots the player can take before it's game over
+            if Menu == True:
+                GameOverScreen.Draw(self.Game_Screen) #PlaceHolder for Main Menu
+                if keys[pygame.K_UP] == True: #PlaceHolder for Start input 
+                    Menu = False
+                    Fight = True
+
+
+            elif Player1_Health.DamageTaken == 4: #sets the number of shots the player can take before it's game over
                 CPUWon = True
                 Is_Game_Over = True
                 self.Game_Screen.fill(Black_Colour)
@@ -321,116 +330,114 @@ class Game:
                 Clock.tick(0.25)
                 break
 
-                #print(event) - remove as comment to see current events being logged 
-            self.Game_Screen.fill(Black_Colour)
-            for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
-                fickercolour = random.randint(110,200) #used to make the stars flicker
-                flickerstar = (fickercolour,fickercolour,fickercolour) #sets new colour for the specified star in the loop
-                pygame.draw.circle(self.Game_Screen, flickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
-             
+            elif Menu == False and Fight == True:    #print(event) - remove as comment to see current events being logged 
+                self.Game_Screen.fill(Black_Colour)
+                for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
+                    fickercolour = random.randint(110,200) #used to make the stars flicker
+                    flickerstar = (fickercolour,fickercolour,fickercolour) #sets new colour for the specified star in the loop
+                    pygame.draw.circle(self.Game_Screen, flickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
+                
 
-            Enemy.Draw (self.Game_Screen) 
-            
+                Enemy.Draw (self.Game_Screen) 
+                
 
-            if FireLazar == True: #Enemy AI conditions used to check if the player has fired their lazer
-                if Lazer.X_pos >= Enemy.X_pos - 10 and Lazer.X_pos <= Enemy.X_pos + 85 and Lazer.Y_pos >= Enemy.Y_pos + 80: 
-                    if Random_Mistake <= 9:
-                        Danger = True
-                        Enemy.Panic(Danger,Lazer.X_pos, Screen_Width)
-                    elif Random_Mistake > 9: #Sets Enemy AI's ability to make a random mistake and give the player an oppertunity to hit them (Value needs to be between 1 and 10. 1 = Easy and 10 = Hard )
+                if FireLazar == True: #Enemy AI conditions used to check if the player has fired their lazer
+                    if Lazer.X_pos >= Enemy.X_pos - 10 and Lazer.X_pos <= Enemy.X_pos + 85 and Lazer.Y_pos >= Enemy.Y_pos + 80: 
+                        if Random_Mistake <= 9:
+                            Danger = True
+                            Enemy.Panic(Danger,Lazer.X_pos, Screen_Width)
+                        elif Random_Mistake > 9: #Sets Enemy AI's ability to make a random mistake and give the player an oppertunity to hit them (Value needs to be between 1 and 10. 1 = Easy and 10 = Hard )
+                            Danger = False
+                            Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
+                    elif Lazer.X_pos <= Enemy.X_pos - 75 or Lazer.X_pos >= Enemy.X_pos + 150:
                         Danger = False
                         Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
-                elif Lazer.X_pos <= Enemy.X_pos - 75 or Lazer.X_pos >= Enemy.X_pos + 150:
-                    Danger = False
-                    Enemy.Move(Player1.X_pos, Player1.Y_pos, Screen_Width)
-            else:
-                Enemy.Move( Player1.X_pos, Player1.Y_pos, Screen_Width)
+                else:
+                    Enemy.Move( Player1.X_pos, Player1.Y_pos, Screen_Width)
+                
             
-           
-            Player1_Health.Draw(self.Game_Screen)
-            PlayerHealthBorder.Draw(self.Game_Screen)
-            PlayerHealthCorner.Draw(self.Game_Screen)
-            Enemy_Health.Draw(self.Game_Screen)
-            EnemyHealthBorder.Draw(self.Game_Screen)
-            EnemyHealthCorner.Draw(self.Game_Screen)
-            EnemyLazarHud.Draw(self.Game_Screen)
-            PlayerLazarHud.Draw(self.Game_Screen)
-             
-            Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
-            Player1.Draw (self.Game_Screen)
+                Player1_Health.Draw(self.Game_Screen)
+                PlayerHealthBorder.Draw(self.Game_Screen)
+                PlayerHealthCorner.Draw(self.Game_Screen)
+                Enemy_Health.Draw(self.Game_Screen)
+                EnemyHealthBorder.Draw(self.Game_Screen)
+                EnemyHealthCorner.Draw(self.Game_Screen)
+                EnemyLazarHud.Draw(self.Game_Screen)
+                PlayerLazarHud.Draw(self.Game_Screen)
+                
+                Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
+                Player1.Draw (self.Game_Screen)
 
-            
-            if FireLazar == True:
-                Lazer.Fire(FireLazar,"Up",Screen_Height, self.Game_Screen)    
-                PlayerCharge.PlayerDraw(Lazer.Y_pos ,self.Game_Screen)
-                if Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == True:
-                    Explode.Y_pos = Enemy.Y_pos
-                    Explode.X_pos = Enemy.X_pos
-                    Explode.Draw (self.Game_Screen)
-                    EnemyHit = True
-                elif EnemyHit == True and Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == False: #used to adjust the enemy health bar after being hit by the player's lazer
-                    Enemy_Health.TotalBlocks = Enemy_Health.TotalBlocks - Enemy_Health.Chunks
-                    Enemy_Health.DamageTaken = Enemy_Health.DamageTaken + 1 #Adjusts he colour of the health bar by incrementing the damage taken for comparison to the initial chunks 
-                    if Enemy_Health.TotalBlocks > 1: #Temp argument to keep the game from crashing after the final shot is given 
-                        Enemy_Health.ColourAdjust(Blocks)
-                    Enemy_Health.Draw(self.Game_Screen)
-                    EnemyHit = False
-            if Lazer.Y_pos <= 25:  
-                FireLazar = False
-            if FireLazar == False:
-                PlayerLazarStatus.Draw(self.Game_Screen)
+                
+                if FireLazar == True:
+                    Lazer.Fire(FireLazar,"Up",Screen_Height, self.Game_Screen)    
+                    PlayerCharge.PlayerDraw(Lazer.Y_pos ,self.Game_Screen)
+                    if Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == True:
+                        Explode.Y_pos = Enemy.Y_pos
+                        Explode.X_pos = Enemy.X_pos
+                        Explode.Draw (self.Game_Screen)
+                        EnemyHit = True
+                    elif EnemyHit == True and Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == False: #used to adjust the enemy health bar after being hit by the player's lazer
+                        Enemy_Health.TotalBlocks = Enemy_Health.TotalBlocks - Enemy_Health.Chunks
+                        Enemy_Health.DamageTaken = Enemy_Health.DamageTaken + 1 #Adjusts he colour of the health bar by incrementing the damage taken for comparison to the initial chunks 
+                        if Enemy_Health.TotalBlocks > 1: #Temp argument to keep the game from crashing after the final shot is given 
+                            Enemy_Health.ColourAdjust(Blocks)
+                        Enemy_Health.Draw(self.Game_Screen)
+                        EnemyHit = False
+                if Lazer.Y_pos <= 25:  
+                    FireLazar = False
+                if FireLazar == False:
+                    PlayerLazarStatus.Draw(self.Game_Screen)
 
-            if EnemyLazar == False:
-                EnemyLazarStatus.Draw(self.Game_Screen)  
-            if LazerCount == 1: #detects if lazer fire was queued by the AI due to the player being in range
-                EnemyLazar = True #sets coditions to True for enemy lazer fire
-                if EnemyLazar == True : 
-                    Enemy_Lazer.Fire(EnemyLazar,"Down",Screen_Height, self.Game_Screen)
-                    EnemyCharge.EnemyDraw(Enemy_Lazer.Y_pos ,self.Game_Screen)
+                if EnemyLazar == False:
+                    EnemyLazarStatus.Draw(self.Game_Screen)  
+                if LazerCount == 1: #detects if lazer fire was queued by the AI due to the player being in range
+                    EnemyLazar = True #sets coditions to True for enemy lazer fire
+                    if EnemyLazar == True : 
+                        Enemy_Lazer.Fire(EnemyLazar,"Down",Screen_Height, self.Game_Screen)
+                        EnemyCharge.EnemyDraw(Enemy_Lazer.Y_pos ,self.Game_Screen)
 
-                    if Enemy_Lazer.Y_pos >= 730:
-                        EnemyLazar = False #removes the lazer from the screen 
-                        Random_Mistake = random.randint(1,10) #Reset the Random int to give the AI a chance to mess up during their next shot. Only resets after enemy fire to avoid Enemy getting hit by "player lazer spam"
-                        LazerCount = 0 #removes the queued lazer so the AI can add another
-                       
-            
-                if Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == True: #Conditions for player taking damager by enemy ship
-                    Explode.Y_pos = Player1.Y_pos
-                    Explode.X_pos = Player1.X_pos
-                    Explode.Draw (self.Game_Screen)
-                    PlayerHit = True
-                elif PlayerHit == True and Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == False: #used to adjust the enemy health bar after being hit by the player's lazer
-                    Player1_Health.TotalBlocks = Player1_Health.TotalBlocks - Player1_Health.Chunks
-                    Player1_Health.DamageTaken = Player1_Health.DamageTaken + 1 #Adjusts he colour of the health bar by incrementing the damage taken for comparison to the initial chunks 
-                    if Player1_Health.TotalBlocks > 1: #Temp argument to keep the game from crashing after the final shot is given 
-                        Player1_Health.ColourAdjust(Blocks)
-                        Player1_Health.X_pos = Player1_Health.X_pos + Player1_Health.Chunks #Moves the player health bar to the right propotionately to the ammount that's been removed from it 
-                    Player1_Health.Draw(self.Game_Screen)
-                    PlayerHit = False
+                        if Enemy_Lazer.Y_pos >= 730:
+                            EnemyLazar = False #removes the lazer from the screen 
+                            Random_Mistake = random.randint(1,10) #Reset the Random int to give the AI a chance to mess up during their next shot. Only resets after enemy fire to avoid Enemy getting hit by "player lazer spam"
+                            LazerCount = 0 #removes the queued lazer so the AI can add another
+                        
+                
+                    if Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == True: #Conditions for player taking damager by enemy ship
+                        Explode.Y_pos = Player1.Y_pos
+                        Explode.X_pos = Player1.X_pos
+                        Explode.Draw (self.Game_Screen)
+                        PlayerHit = True
+                    elif PlayerHit == True and Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == False: #used to adjust the enemy health bar after being hit by the player's lazer
+                        Player1_Health.TotalBlocks = Player1_Health.TotalBlocks - Player1_Health.Chunks
+                        Player1_Health.DamageTaken = Player1_Health.DamageTaken + 1 #Adjusts he colour of the health bar by incrementing the damage taken for comparison to the initial chunks 
+                        if Player1_Health.TotalBlocks > 1: #Temp argument to keep the game from crashing after the final shot is given 
+                            Player1_Health.ColourAdjust(Blocks)
+                            Player1_Health.X_pos = Player1_Health.X_pos + Player1_Health.Chunks #Moves the player health bar to the right propotionately to the ammount that's been removed from it 
+                        Player1_Health.Draw(self.Game_Screen)
+                        PlayerHit = False
 
-                if Player1.X_pos >= Enemy.X_pos - 50 and Player1.X_pos <= Enemy.X_pos + 75 and Player1.Y_pos >= Enemy.Y_pos - 60 and Player1.Y_pos <= Enemy.Y_pos + 65: #Checks if the ships collide, numbers adjust to accomodate the shpe and size of the sprites
-                    Explode.Y_pos = Player1.Y_pos
-                    Explode.X_pos = Player1.X_pos
-                    Explode.Draw (self.Game_Screen)
-                    Explode.Y_pos = Enemy.Y_pos
-                    Explode.X_pos = Enemy.X_pos
-                    Explode.Draw (self.Game_Screen)
-                    Player1_Health.TotalBlocks = Player1_Health.TotalBlocks - Player1_Health.Chunks
-                    Player1_Health.DamageTaken = Player1_Health.DamageTaken + 1 #Adjusts he colour of the health bar by incrementing the damage taken for comparison to the initial chunks 
-                    if Player1_Health.TotalBlocks > 1: #Temp argument to keep the game from crashing after the final shot is given 
-                        Player1_Health.ColourAdjust(Blocks)
-                    Player1_Health.Draw(self.Game_Screen)
-                    
+                    if Player1.X_pos >= Enemy.X_pos - 50 and Player1.X_pos <= Enemy.X_pos + 75 and Player1.Y_pos >= Enemy.Y_pos - 60 and Player1.Y_pos <= Enemy.Y_pos + 65: #Checks if the ships collide, numbers adjust to accomodate the shpe and size of the sprites
+                        Explode.Y_pos = Player1.Y_pos
+                        Explode.X_pos = Player1.X_pos
+                        Explode.Draw (self.Game_Screen)
+                        Explode.Y_pos = Enemy.Y_pos
+                        Explode.X_pos = Enemy.X_pos
+                        Explode.Draw (self.Game_Screen)
+                        Player1_Health.TotalBlocks = Player1_Health.TotalBlocks - Player1_Health.Chunks
+                        Player1_Health.DamageTaken = Player1_Health.DamageTaken + 1 #Adjusts he colour of the health bar by incrementing the damage taken for comparison to the initial chunks 
+                        if Player1_Health.TotalBlocks > 1: #Temp argument to keep the game from crashing after the final shot is given 
+                            Player1_Health.ColourAdjust(Blocks)
+                        Player1_Health.Draw(self.Game_Screen)
+                        
 
-            elif Player1.X_pos - 35 <= Enemy.X_pos and Player1.X_pos + 25 >= Enemy.X_pos: #Used to queue lazer fire with the AI
-                Enemy_Lazer.Y_pos = Enemy.Y_pos
-                Enemy_Lazer.X_pos = Enemy.X_pos + 35
-                LazerCount = 1 #Queued lazer fire with the AI
+                elif Player1.X_pos - 35 <= Enemy.X_pos and Player1.X_pos + 25 >= Enemy.X_pos: #Used to queue lazer fire with the AI
+                    Enemy_Lazer.Y_pos = Enemy.Y_pos
+                    Enemy_Lazer.X_pos = Enemy.X_pos + 35
+                    LazerCount = 1 #Queued lazer fire with the AI
 
                       
-                if CPUWon == True:         
-                    self.Game_Screen.fill(Black_Colour)
-                    GameOverScreen.Draw(self.Game_Screen)
+                
             
 
             pygame.display.update() #Updates the current frame after completing the loop
