@@ -36,6 +36,13 @@ Clock = pygame.time.Clock()
 TotalStars = 250 #  - USED TO Create randomly generated night sky
 StarListX_pos = random.sample(range(1, 800), TotalStars) #  - USED TO Create randomly generated night sky
 StarListY_pos = random.sample(range(1, 800), TotalStars) #  - USED TO Create randomly generated night sky
+StarListBool = [] #list used to determine if a star is near or far
+for i in range(TotalStars): #generates bool values for the star list
+    RandomBool = random.randint(0,1)
+    if RandomBool == 1:
+        StarListBool.append(True)
+    elif RandomBool == 0:
+        StarListBool.append(False)
 
 
 class GameObject: #class for defining game objects that will be drawn onto the game screen and moved arround
@@ -306,9 +313,10 @@ class Game:
 
             if Menu == True:
                 GameOverScreen.Draw(self.Game_Screen) #PlaceHolder for Main Menu
-                if keys[pygame.K_UP] == True: #PlaceHolder for Start input 
+                if keys[pygame.K_RETURN] == True: #PlaceHolder for Start input 
                     Menu = False
                     Fight = True
+
 
 
             elif Player1_Health.DamageTaken == 4: #sets the number of shots the player can take before it's game over
@@ -333,9 +341,15 @@ class Game:
             elif Menu == False and Fight == True:    #print(event) - remove as comment to see current events being logged 
                 self.Game_Screen.fill(Black_Colour)
                 for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
-                    fickercolour = random.randint(110,200) #used to make the stars flicker
-                    flickerstar = (fickercolour,fickercolour,fickercolour) #sets new colour for the specified star in the loop
-                    pygame.draw.circle(self.Game_Screen, flickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
+                    if StarListBool[i] == True:
+                        Nearfickercolour = random.randint(110,200) #used to make the stars flicker brighter to make them seem closer
+                        Nearflickerstar = (Nearfickercolour,Nearfickercolour,Nearfickercolour) #sets new colour for the specified star in the loop
+                        pygame.draw.circle(self.Game_Screen, Nearflickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
+                    elif StarListBool[i] == False:
+                        Farfickercolour = random.randint(50,100) #used to make the stars flicker more dim to make them seem far
+                        Farflickerstar = (Farfickercolour,Farfickercolour,Farfickercolour) #sets new colour for the specified star in the loop
+                        pygame.draw.circle(self.Game_Screen, Farflickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
+
                 
 
                 Enemy.Draw (self.Game_Screen) 
