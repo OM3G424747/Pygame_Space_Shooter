@@ -20,6 +20,8 @@ py -m pip install -U pygame==1.9.6 --user
 
 import pygame
 import random
+import math
+import os
 
 Screen_Width = 800
 Screen_Height = 800
@@ -323,8 +325,71 @@ class Game:
                             Lazer.Y_pos = Player1.Y_pos
                             Lazer.X_pos = Player1.X_pos + 32
 
-            def StarGenerator(): #create funtion to generate and move stars based on player movement 
-                pass
+            def StarGenerator(PlayerY_direction, PlayerX_direction): #create funtion to generate and move stars based on player movement 
+                for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
+                    if StarListBool[i -1] == True:
+                        Nearfickercolour = random.randint(120,180) #used to make the stars flicker brighter to make them seem closer
+                        Nearflickerstar = (Nearfickercolour,Nearfickercolour,Nearfickercolour) #sets new colour for the specified star in the loop
+                        pygame.draw.circle(self.Game_Screen, Nearflickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
+                    elif StarListBool[i -1] == False:
+                        Farfickercolour = random.randint(50,100) #used to make the stars flicker more dim to make them seem far
+                        Farflickerstar = (Farfickercolour,Farfickercolour,Farfickercolour) #sets new colour for the specified star in the loop
+                        pygame.draw.circle(self.Game_Screen, Farflickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
+                    if Clock.tick() == 1:
+                        for i in range (len(StarListX_pos)):
+                            if StarListBool[i] == True:
+                                if PlayerY_direction == 1:
+                                    StarListY_pos[i] = StarListY_pos[i] + StarListSpeed[i]
+                                    if PlayerY_direction == 1 and PlayerX_direction == 1:
+                                        StarListY_pos[i] = StarListY_pos[i] + int(StarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] + int(StarListSpeed[i] /1.5)
+                                    elif PlayerY_direction == 1 and PlayerX_direction == -1:
+                                        StarListY_pos[i] = StarListY_pos[i] + int(StarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] - int(StarListSpeed[i] /1.5)
+                                elif PlayerY_direction == -1:
+                                    StarListY_pos[i] = StarListY_pos[i] - StarListSpeed[i]
+                                    if PlayerY_direction == -1 and PlayerX_direction == 1:
+                                        StarListY_pos[i] = StarListY_pos[i] - int(StarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] + int(StarListSpeed[i] /1.5)
+                                    elif PlayerY_direction == -1 and PlayerX_direction == -1:
+                                        StarListY_pos[i] = StarListY_pos[i] - int(StarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] - int(StarListSpeed[i] /1.5)
+                                elif PlayerX_direction == -1:
+                                    StarListX_pos[i] = StarListX_pos[i] - StarListSpeed[i]
+                                elif PlayerX_direction == 1:
+                                    StarListX_pos[i] = StarListX_pos[i] + StarListSpeed[i]
+
+                            elif StarListBool[i] == False:
+                                if PlayerY_direction == 1:
+                                    StarListY_pos[i] = StarListY_pos[i] + FarStarListSpeed[i]
+                                    if PlayerY_direction == 1 and PlayerX_direction == 1:
+                                        StarListY_pos[i] = StarListY_pos[i] + int(FarStarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] + int(FarStarListSpeed[i] /1.5)
+                                    elif PlayerY_direction == 1 and PlayerX_direction == -1:
+                                        StarListY_pos[i] = StarListY_pos[i] + int(FarStarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] - int(FarStarListSpeed[i] /1.5)
+                                elif PlayerY_direction == -1:
+                                    StarListY_pos[i] = StarListY_pos[i] - FarStarListSpeed[i]
+                                    if PlayerY_direction == -1 and PlayerX_direction == 1:
+                                        StarListY_pos[i] = StarListY_pos[i] - int(FarStarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] + int(FarStarListSpeed[i] /1.5)
+                                    elif PlayerY_direction == -1 and PlayerX_direction == -1:
+                                        StarListY_pos[i] = StarListY_pos[i] - int(FarStarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] - int(FarStarListSpeed[i] /1.5)
+                                elif PlayerX_direction == -1:
+                                    StarListX_pos[i] = StarListX_pos[i] - FarStarListSpeed[i]
+                                elif PlayerX_direction == 1:
+                                    StarListX_pos[i] = StarListX_pos[i] + FarStarListSpeed[i]
+                                
+                            if StarListY_pos[i] >= Screen_Height:
+                                    StarListY_pos[i] = 0
+                            elif StarListX_pos[i] >= Screen_Width:
+                                    StarListX_pos[i] = 0
+                            elif StarListX_pos[i] <= 0:
+                                    StarListX_pos[i] = Screen_Height    
+                            elif StarListY_pos[i] <= 0:
+                                    StarListY_pos[i] = Screen_Width
+
             
             if Menu == True:
                 self.Game_Screen.fill(Black_Colour)
@@ -379,6 +444,9 @@ class Game:
 
             elif Menu == False and Fight == True:    #print(event) - remove as comment to see current events being logged 
                 self.Game_Screen.fill(Black_Colour)
+                StarGenerator(Y_direction, X_direction)
+
+                """
                 for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
                     if StarListBool[i] == True:
                         Nearfickercolour = random.randint(110,200) #used to make the stars flicker brighter to make them seem closer
@@ -388,7 +456,7 @@ class Game:
                         Farfickercolour = random.randint(50,100) #used to make the stars flicker more dim to make them seem far
                         Farflickerstar = (Farfickercolour,Farfickercolour,Farfickercolour) #sets new colour for the specified star in the loop
                         pygame.draw.circle(self.Game_Screen, Farflickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
-                        
+                """        
                 
                 
 
