@@ -341,19 +341,19 @@ class Game:
                                 if PlayerY_direction == 1:
                                     StarListY_pos[i] = StarListY_pos[i] + StarListSpeed[i]
                                     if PlayerY_direction == 1 and PlayerX_direction == 1:
-                                        StarListY_pos[i] = StarListY_pos[i] + int(StarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] + int(StarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(StarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(StarListSpeed[i] /1.5)
                                     elif PlayerY_direction == 1 and PlayerX_direction == -1:
-                                        StarListY_pos[i] = StarListY_pos[i] + int(StarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] - int(StarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(StarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(StarListSpeed[i] /1.5)
                                 elif PlayerY_direction == -1:
                                     StarListY_pos[i] = StarListY_pos[i] - StarListSpeed[i]
                                     if PlayerY_direction == -1 and PlayerX_direction == 1:
-                                        StarListY_pos[i] = StarListY_pos[i] - int(StarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] + int(StarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(StarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(StarListSpeed[i] /1.5)
                                     elif PlayerY_direction == -1 and PlayerX_direction == -1:
-                                        StarListY_pos[i] = StarListY_pos[i] - int(StarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] - int(StarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(StarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(StarListSpeed[i] /1.5)
                                 elif PlayerX_direction == -1:
                                     StarListX_pos[i] = StarListX_pos[i] - StarListSpeed[i]
                                 elif PlayerX_direction == 1:
@@ -363,19 +363,19 @@ class Game:
                                 if PlayerY_direction == 1:
                                     StarListY_pos[i] = StarListY_pos[i] + FarStarListSpeed[i]
                                     if PlayerY_direction == 1 and PlayerX_direction == 1:
-                                        StarListY_pos[i] = StarListY_pos[i] + int(FarStarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] + int(FarStarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(FarStarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(FarStarListSpeed[i] /1.5)
                                     elif PlayerY_direction == 1 and PlayerX_direction == -1:
-                                        StarListY_pos[i] = StarListY_pos[i] + int(FarStarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] - int(FarStarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(FarStarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(FarStarListSpeed[i] /1.5)
                                 elif PlayerY_direction == -1:
                                     StarListY_pos[i] = StarListY_pos[i] - FarStarListSpeed[i]
                                     if PlayerY_direction == -1 and PlayerX_direction == 1:
-                                        StarListY_pos[i] = StarListY_pos[i] - int(FarStarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] + int(FarStarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(FarStarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(FarStarListSpeed[i] /1.5)
                                     elif PlayerY_direction == -1 and PlayerX_direction == -1:
-                                        StarListY_pos[i] = StarListY_pos[i] - int(FarStarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] - int(FarStarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(FarStarListSpeed[i] /1.5)
+                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(FarStarListSpeed[i] /1.5)
                                 elif PlayerX_direction == -1:
                                     StarListX_pos[i] = StarListX_pos[i] - FarStarListSpeed[i]
                                 elif PlayerX_direction == 1:
@@ -425,22 +425,30 @@ class Game:
 
             elif Player1_Health.DamageTaken == 4: #sets the number of shots the player can take before it's game over
                 CPUWon = True
-                Is_Game_Over = True
+                Fight = False
+                
+                
                 self.Game_Screen.fill(Black_Colour)
                 GameOverScreen.Draw(self.Game_Screen)
                 pygame.display.update() #Updates the current frame after completing the loop
-                Clock.tick(0.15)
-                break
-              
+                if keys[pygame.K_RETURN] == True: #PlaceHolder for Start input 
+                    Menu = False
+                    Fight = True
+                    CPUWon = False
+                    self.run_game_loop()
+                    
                 
             elif Enemy_Health.DamageTaken == 5: #sets the number of shots the enemy can take before it's game over
-                PlayerWon = True  
-                Is_Game_Over = True
+                PlayerWon = True
+                Fight = False  
                 self.Game_Screen.fill(Black_Colour)
                 WinScreen.Draw(self.Game_Screen)
                 pygame.display.update() #Updates the current frame after completing the loop
-                Clock.tick(0.25)
-                break
+                if keys[pygame.K_RETURN] == True: #PlaceHolder for Start input 
+                    Menu = False
+                    Fight = True
+                    CPUWon = False
+                    self.run_game_loop()
 
             elif Menu == False and Fight == True:    #print(event) - remove as comment to see current events being logged 
                 self.Game_Screen.fill(Black_Colour)

@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['BasicGame.py'],
-             pathex=['C:\\Users\\om3g4\\Desktop\\Python\\Projects\\Game Dev'],
+             pathex=['C:\\Users\\om3g4\\Desktop\\Python\\Projects\\GameDev'],
              binaries=[],
              datas=[],
              hiddenimports=[],
