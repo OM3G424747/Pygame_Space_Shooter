@@ -49,10 +49,10 @@ for i in range(len(StarListY_pos)): #generates bool values for the star list
         StarListBool.append(False)
 
 for i in range(len(StarListY_pos)): #generates an int values for the star list
-    RandomSpeed = random.randint(3,5)
+    RandomSpeed = random.randint(4,6)
     StarListSpeed.append(RandomSpeed)
 for i in range(len(StarListY_pos)): #generates an int values for the star list
-    RandomSpeed = random.randint(1,2)
+    RandomSpeed = random.randint(1,3)
     FarStarListSpeed.append(RandomSpeed)
    
 
@@ -69,6 +69,7 @@ class GameObject: #class for defining game objects that will be drawn onto the g
     
     def Draw (self,background): #This function is used to draw the object on the game screen
         background.blit(self.Image,(self.X_pos,self.Y_pos)) #Blit funtion is used to draw imaghes to the game screen/ surface selected along with the X and Y Pos taken in the form of a tuple 
+        
 
 class PlayerCharacter(GameObject):
     
@@ -245,6 +246,7 @@ class Game:
         PlayerWon = False
         CPUWon = False
         Menu = True
+        altMenu = 0
         Fight = False
         Y_direction = 0
         X_direction = 0
@@ -281,6 +283,10 @@ class Game:
         GameOverScreen = NonPlayerCharacter("GameOver.png", 100, 300, 600, 200)
         WinScreen = NonPlayerCharacter("win.png", 100, 300, 600, 200)
         Logo = NonPlayerCharacter("Logo.png", 0, 0, 800, 800)
+        EndGame = NonPlayerCharacter("Quit.png", 300, 750, 200, 20)
+        ControlMenu = NonPlayerCharacter("ControlMenu.png", 225, 680, 350, 20 )
+        RuturnToMainMenu = NonPlayerCharacter("ReturnMain.png", 100, 680, 625, 20)
+        ControlList = NonPlayerCharacter("controls.png", 55, 220, 695, 200)
         
         
         
@@ -338,44 +344,44 @@ class Game:
                     if Clock.tick() == 1:
                         for i in range (len(StarListX_pos)):
                             if StarListBool[i] == True:
-                                if PlayerY_direction == 1:
+                                if PlayerY_direction == 1: #Checks for Up movement from player to make the stars move down 
                                     StarListY_pos[i] = StarListY_pos[i] + StarListSpeed[i]
                                     if PlayerY_direction == 1 and PlayerX_direction == 1:
-                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(StarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(StarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(StarListSpeed[i] /2)
+                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(StarListSpeed[i] /2)
                                     elif PlayerY_direction == 1 and PlayerX_direction == -1:
-                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(StarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(StarListSpeed[i] /1.5)
-                                elif PlayerY_direction == -1:
+                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(StarListSpeed[i] /2)
+                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(StarListSpeed[i] /2)
+                                elif PlayerY_direction == -1: #Checks for Up movement from player to make the stars move down 
                                     StarListY_pos[i] = StarListY_pos[i] - StarListSpeed[i]
                                     if PlayerY_direction == -1 and PlayerX_direction == 1:
-                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(StarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(StarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(StarListSpeed[i] /2)
+                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(StarListSpeed[i] /2)
                                     elif PlayerY_direction == -1 and PlayerX_direction == -1:
-                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(StarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(StarListSpeed[i] /1.5)
-                                elif PlayerX_direction == -1:
+                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(StarListSpeed[i] /2)
+                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(StarListSpeed[i] /2)
+                                elif PlayerX_direction == -1: #Checks for Right arrow key to make the stars move left 
                                     StarListX_pos[i] = StarListX_pos[i] - StarListSpeed[i]
-                                elif PlayerX_direction == 1:
+                                elif PlayerX_direction == 1: #Checks for Left arrow key to make the stars move right 
                                     StarListX_pos[i] = StarListX_pos[i] + StarListSpeed[i]
 
                             elif StarListBool[i] == False:
                                 if PlayerY_direction == 1:
                                     StarListY_pos[i] = StarListY_pos[i] + FarStarListSpeed[i]
                                     if PlayerY_direction == 1 and PlayerX_direction == 1:
-                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(FarStarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(FarStarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(FarStarListSpeed[i] /2)
+                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(FarStarListSpeed[i] /2)
                                     elif PlayerY_direction == 1 and PlayerX_direction == -1:
-                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(FarStarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(FarStarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] + math.floor(FarStarListSpeed[i] /2)
+                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(FarStarListSpeed[i] /2)
                                 elif PlayerY_direction == -1:
                                     StarListY_pos[i] = StarListY_pos[i] - FarStarListSpeed[i]
                                     if PlayerY_direction == -1 and PlayerX_direction == 1:
-                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(FarStarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(FarStarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(FarStarListSpeed[i] /2)
+                                        StarListX_pos[i] = StarListX_pos[i] + math.floor(FarStarListSpeed[i] /2)
                                     elif PlayerY_direction == -1 and PlayerX_direction == -1:
-                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(FarStarListSpeed[i] /1.5)
-                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(FarStarListSpeed[i] /1.5)
+                                        StarListY_pos[i] = StarListY_pos[i] - math.floor(FarStarListSpeed[i] /2)
+                                        StarListX_pos[i] = StarListX_pos[i] - math.floor(FarStarListSpeed[i] /2)
                                 elif PlayerX_direction == -1:
                                     StarListX_pos[i] = StarListX_pos[i] - FarStarListSpeed[i]
                                 elif PlayerX_direction == 1:
@@ -391,36 +397,32 @@ class Game:
                                     StarListY_pos[i] = Screen_Width
 
             
-            if Menu == True:
+            if Menu == True and altMenu == 0:
                 self.Game_Screen.fill(Black_Colour)
-                for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
-                    if StarListBool[i -1] == True:
-                        Nearfickercolour = random.randint(120,180) #used to make the stars flicker brighter to make them seem closer
-                        Nearflickerstar = (Nearfickercolour,Nearfickercolour,Nearfickercolour) #sets new colour for the specified star in the loop
-                        pygame.draw.circle(self.Game_Screen, Nearflickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
-                    elif StarListBool[i -1] == False:
-                        Farfickercolour = random.randint(50,100) #used to make the stars flicker more dim to make them seem far
-                        Farflickerstar = (Farfickercolour,Farfickercolour,Farfickercolour) #sets new colour for the specified star in the loop
-                        pygame.draw.circle(self.Game_Screen, Farflickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
-                    if Clock.tick() == 1:
-                        for i in range (len(StarListY_pos)):
-                            if StarListBool[i] == True:
-                                StarListY_pos[i] = StarListY_pos[i] + StarListSpeed[i]
-                                if StarListY_pos[i] >= Screen_Height:
-                                    StarListY_pos[i] = 0
-                            elif StarListBool[i] == False:
-                                StarListY_pos[i] = StarListY_pos[i] + FarStarListSpeed[i]
-                                if StarListY_pos[i] >= Screen_Height:
-                                    StarListY_pos[i] = 0
-
-
-                           
-
-                Logo.Draw(self.Game_Screen) #PlaceHolder for Main Menu
+                StarGenerator(0,-1) #used to make the stars move down while on the main screen
+                EndGame.Draw(self.Game_Screen)
+                ControlMenu.Draw(self.Game_Screen)
+                                  
+                Logo.Draw(self.Game_Screen) #PlaceHolder Logo for Main Menu
                 if keys[pygame.K_RETURN] == True: #PlaceHolder for Start input 
                     Menu = False
                     Fight = True
+                if keys[pygame.K_c] == True:
+                    altMenu = 1
+                if keys[pygame.K_ESCAPE] == True:
+                    Is_Game_Over = True
 
+            elif Menu == True and altMenu == 1:
+                self.Game_Screen.fill(Black_Colour)
+                StarGenerator(1,0) #used to make the stars move down while on the main screen
+                ControlList.Draw(self.Game_Screen)
+                RuturnToMainMenu.Draw(self.Game_Screen)
+               
+                if keys[pygame.K_BACKSPACE] == True: #PlaceHolder for Start input 
+                    altMenu = 0
+
+
+                
 
 
             elif Player1_Health.DamageTaken == 4: #sets the number of shots the player can take before it's game over
@@ -452,22 +454,9 @@ class Game:
 
             elif Menu == False and Fight == True:    #print(event) - remove as comment to see current events being logged 
                 self.Game_Screen.fill(Black_Colour)
-                StarGenerator(Y_direction, X_direction)
-
-                """
-                for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
-                    if StarListBool[i] == True:
-                        Nearfickercolour = random.randint(110,200) #used to make the stars flicker brighter to make them seem closer
-                        Nearflickerstar = (Nearfickercolour,Nearfickercolour,Nearfickercolour) #sets new colour for the specified star in the loop
-                        pygame.draw.circle(self.Game_Screen, Nearflickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
-                    elif StarListBool[i] == False:
-                        Farfickercolour = random.randint(50,100) #used to make the stars flicker more dim to make them seem far
-                        Farflickerstar = (Farfickercolour,Farfickercolour,Farfickercolour) #sets new colour for the specified star in the loop
-                        pygame.draw.circle(self.Game_Screen, Farflickerstar, (StarListX_pos[i - 1],StarListY_pos[i - 1]), 1)
-                """        
+                StarGenerator(Y_direction, X_direction) #Generates stars that move in the opposite direction to the player      
                 
-                
-
+    
                 Enemy.Draw (self.Game_Screen) 
                 
 
