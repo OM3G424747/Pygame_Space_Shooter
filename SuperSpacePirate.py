@@ -189,7 +189,40 @@ class NonPlayerCharacter(GameObject):
                 self.X_pos += self.Speed
             
         
-     
+class particles:
+    def __init__ (self,Hit, lazerX, lazerY, lazerMovement, shipY, shipX): #funtion for testing particles 
+                lazerX = int(lazerX)
+                lazerY = int(lazerY)
+                shipX = int(shipX)
+                shipY = int(shipY)
+                shipHit = True  
+                HitCount = 0
+                if Hit == True:
+                    HitCount += 1
+                particleFade =(255,255,0) #RGB 
+                numberOfParticles = 10
+                particlesStartX_pos = []
+                particlesStartY_pos = []
+                particlesEndX_pos = []
+                particlesEndY_pos = []
+                particlesSpeed = []
+                if lazerMovement == "Up" and HitCount == 0: #up keeps refreshing lists, rework so it only updates on impact
+                    for i in range (numberOfParticles):
+                        randomSpeed = random.randint(6,10)
+                        particlesSpeed.append(randomSpeed)
+                        particlesStartY_pos.append(int(shipX))
+                        particlesStartX_pos.append(int(shipY))
+                        destinationX_pos = random.randint(0, Screen_Width)
+                        destinationY_pos = random.randint(lazerY, lazerY + 300)
+                        particlesEndY_pos.append(int(destinationY_pos))
+                        particlesEndX_pos.append(int(destinationX_pos)) 
+                elif lazerMovement == "Up" and HitCount > 0:    
+                    for i in range (len(particlesEndY_pos)):
+                        pygame.draw.circle(self.Game_Screen, particleFade, (particlesStartX_pos[i - 1],particlesStartY_pos[i - 1]), 1)
+                        if particlesStartY_pos[i - 1] < particlesEndY_pos[i - 1]:
+                            particlesStartY_pos[i - 1] = particlesStartY_pos[i - 1] + particlesSpeed[i - 1]
+                elif lazerMovement == "Down":
+                    pass #to be added after tests      
 
 class HealthBar:
     FullColour = 255
@@ -285,8 +318,8 @@ class Game:
         GameOverScreen = NonPlayerCharacter("GameOver.png", 100, 300, 600, 200)
         WinScreen = NonPlayerCharacter("win.png", 100, 300, 600, 200)
         Logo = NonPlayerCharacter("Logo.png", 0, 0, 800, 800)
-        EndGame = NonPlayerCharacter("Quit.png", 300, 750, 200, 20)
-        ControlMenu = NonPlayerCharacter("ControlMenu.png", 225, 680, 350, 20 )
+        EndGame = NonPlayerCharacter("Quit.png", 300, 750, 201, 14)
+        ControlMenu = NonPlayerCharacter("ControlMenu.png", 255, 680, 284, 14 ) #Image, X, Y, Width, Height 
         RuturnToMainMenu = NonPlayerCharacter("ReturnMain.png", 100, 680, 625, 20)
         ControlList = NonPlayerCharacter("controls.png", 55, 220, 695, 200)
         
@@ -333,48 +366,7 @@ class Game:
                             Lazer.Y_pos = Player1.Y_pos
                             Lazer.X_pos = Player1.X_pos + 32
 
-            def particles(Hit, lazerX, lazerY, lazerMovement, shipY, shipX): #funtion for testing particles 
-                lazerX = int(lazerX)
-                lazerY = int(lazerY)
-                shipX = int(shipX)
-                shipY = int(shipY)
-                shipHit = True  
-                HitCount = 0
-                if Hit == True:
-                    HitCount += 1
-                particleFade =(255,255,0) #RGB 
-                numberOfParticles = 10
-                particlesStartX_pos = []
-                particlesStartY_pos = []
-                particlesEndX_pos = []
-                particlesEndY_pos = []
-                particlesSpeed = []
-                if lazerMovement == "Up" and HitCount == 0: #up keeps refreshing lists, rework so it only updates on impact
-                    for i in range (numberOfParticles):
-                        randomSpeed = random.randint(6,10)
-                        particlesSpeed.append(randomSpeed)
-                        particlesStartY_pos.append(int(shipX))
-                        particlesStartX_pos.append(int(shipY))
-                        destinationX_pos = random.randint(0, Screen_Width)
-                        destinationY_pos = random.randint(lazerY, lazerY + 300)
-                        particlesEndY_pos.append(int(destinationY_pos))
-                        particlesEndX_pos.append(int(destinationX_pos)) 
-                elif lazerMovement == "Up" and HitCount > 0:    
-                    for i in range (len(particlesEndY_pos)):
-                        pygame.draw.circle(self.Game_Screen, particleFade, (particlesStartX_pos[i - 1],particlesStartY_pos[i - 1]), 1)
-                        if particlesStartY_pos[i - 1] < particlesEndY_pos[i - 1]:
-                            particlesStartY_pos[i - 1] = particlesStartY_pos[i - 1] + particlesSpeed[i - 1]
-                elif lazerMovement == "Down":
-                    pass #to be added after tests 
-
-                
-               
-
-                        
-
-
-
-
+        
 
 
             def StarGenerator(PlayerY_direction, PlayerX_direction): #create funtion to generate and move stars based on player movement 
