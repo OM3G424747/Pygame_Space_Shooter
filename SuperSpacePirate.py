@@ -551,22 +551,29 @@ class Game:
                                 sparks.particlesEndX_pos.append(random.randint(int(shipX -100), int(shipX + 800)))
                             #if (len(sparks.particlesStartY_pos)) > 1:
                     
-                    if len(sparks.particlesStartX_pos) > count:
-                        if sparks.particlesStartX_pos[count] <= sparks.particlesEndX_pos[count] and sparks.particlesStartY_pos[count] in sparks.particlesStartY_pos:
-                            del sparks.particlesSpeed[count]
-                            del sparks.particlesEndY_pos[count]
-                            del sparks.particlesEndX_pos[count]
-                            del sparks.particlesStartY_pos[count]
-                            del sparks.particlesStartX_pos[count]
-                            count += 1
-                    elif len(sparks.particlesStartX_pos) < count:
-                        count -= 1
-                        if len(sparks.particlesStartX_pos) > 1:
-                            del sparks.particlesSpeed[0]
-                            del sparks.particlesEndY_pos[0]
-                            del sparks.particlesEndX_pos[0]
-                            del sparks.particlesStartY_pos[0]
-                            del sparks.particlesStartX_pos[0]
+                    
+                        if len(sparks.particlesStartX_pos) > count: #adjust so it continues to delete the list even if shipHit is false
+                            if sparks.particlesStartX_pos[count] <= sparks.particlesEndX_pos[count] and sparks.particlesStartY_pos[count] in sparks.particlesStartY_pos:
+                                del sparks.particlesSpeed[count]
+                                del sparks.particlesEndY_pos[count]
+                                del sparks.particlesEndX_pos[count]
+                                del sparks.particlesStartY_pos[count]
+                                del sparks.particlesStartX_pos[count]
+                                count += 1
+                            else:
+                                del sparks.particlesSpeed[0]
+                                del sparks.particlesEndY_pos[0]
+                                del sparks.particlesEndX_pos[0]
+                                del sparks.particlesStartY_pos[0]
+                                del sparks.particlesStartX_pos[0]
+                        elif len(sparks.particlesStartX_pos) < count:
+                            count -= 1
+                            if len(sparks.particlesStartX_pos) > 1:
+                                del sparks.particlesSpeed[0]
+                                del sparks.particlesEndY_pos[0]
+                                del sparks.particlesEndX_pos[0]
+                                del sparks.particlesStartY_pos[0]
+                                del sparks.particlesStartX_pos[0]
 
 
                     for i in range (len(sparks.particlesStartX_pos)):
@@ -578,7 +585,7 @@ class Game:
                                         sparks.particleFade[i - 1] -= fadeChunk
                                     elif sparks.particleFade[i - 1] < fadeChunk:
                                         sparks.particleFade[i - 1] = 0
-                                    sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] + sparks.particlesSpeed[i - 1] 
+                                    sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,1)
                                     sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,1)
                                     pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],0), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
                                                     
@@ -588,7 +595,7 @@ class Game:
                                         sparks.particleFade[i - 1] -= fadeChunk
                                     elif sparks.particleFade[i - 1] < fadeChunk:
                                         sparks.particleFade[i - 1] = 0
-                                    sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] - sparks.particlesSpeed[i - 1] 
+                                    sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] - sparks.particlesSpeed[i - 1] + random.randint(0,1)
                                     sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,1)
                                     pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],0), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
                                    
