@@ -191,8 +191,8 @@ class NonPlayerCharacter(GameObject):
         
 class particles:
     def __init__ (self, Game_Screen): #funtion for testing particles 
-        self.shipHit = True  
-        self.particleFade =(255,255,0) #RGB
+        self.shipHit = False  
+        self.particleFade =[] #list to hold colour value
         self.numberOfParticles = 1 
         self.HitCount = False
         self.particlesStartX_pos = []
@@ -533,34 +533,84 @@ class Game:
                 def Sparksfun (lazerMovement, shipX, shipY, lazerX, lazerY):    
                     shipXPos = lazerX
                     shipYPos = lazerY
+                    count = 0
                     if sparks.shipHit == True:
-                        sparks.numberOfParticles += 1
-                        for i in range (12):
-                            sparks.particlesSpeed.append(int(random.randint(2, 5)))
-                            sparks.particlesStartY_pos.append(shipYPos)
-                            sparks.particlesStartX_pos.append(shipXPos)
-                            #destinationX_pos = 
-                            destinationY_pos = random.randint(int(shipYPos) + 10, int(shipYPos) + 300)
-                            sparks.particlesEndY_pos.append(int(destinationY_pos))
-                            sparks.particlesEndX_pos.append(random.randint(1, 800))
-                        
-                            for i in range (len(sparks.particlesStartY_pos)):
-                                if sparks.particlesStartY_pos[i] < sparks.particlesEndY_pos[i]:
-                                    if sparks.particlesStartX_pos[i - 1] < sparks.particlesEndX_pos[i - 1]:
-                                        sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] + sparks.particlesSpeed[i - 1]
-                                        sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1]
-                                        pygame.draw.circle(sparks.Game_Screen, sparks.particleFade, (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
-                                            
-                                    elif sparks.particlesStartX_pos[i - 1] > sparks.particlesEndX_pos[i - 1]:
-                                        sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] - sparks.particlesSpeed[i - 1]
-                                        sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1]
-                                        pygame.draw.circle(sparks.Game_Screen, sparks.particleFade, (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
-
-                                    elif lazerMovement == "Down":
-                                        pass
+                        for i in range (2):
+                            sparks.particlesSpeed.append(int(random.randint(1, 4)))
+                            print(sparks.particlesSpeed)
+                            sparks.particleFade.append(255)
+                            sparks.particlesStartY_pos.append(int(shipYPos))
+                            sparks.particlesStartX_pos.append(int(shipXPos))
                             
+                            #destinationX_pos = 
+                            destinationY_pos = random.randint(int(shipY), int(shipY) + 300)
+                            sparks.particlesEndY_pos.append(int(destinationY_pos))
+                            if shipX + 35 > lazerX:
+                                sparks.particlesEndX_pos.append(random.randint(int(shipX - 800), int(shipX + 100)))
+                            elif shipX + 35 < lazerX:
+                                sparks.particlesEndX_pos.append(random.randint(int(shipX -100), int(shipX + 800)))
+                            #if (len(sparks.particlesStartY_pos)) > 1:
+                    
+                    if len(sparks.particlesStartX_pos) > count:
+                        if sparks.particlesStartX_pos[count] <= sparks.particlesEndX_pos[count] and sparks.particlesStartY_pos[count] in sparks.particlesStartY_pos:
+                            del sparks.particlesSpeed[count]
+                            del sparks.particlesEndY_pos[count]
+                            del sparks.particlesEndX_pos[count]
+                            del sparks.particlesStartY_pos[count]
+                            del sparks.particlesStartX_pos[count]
+                            count += 1
+                    elif len(sparks.particlesStartX_pos) < count:
+                        count -= 1
+                        if len(sparks.particlesStartX_pos) > 1:
+                            del sparks.particlesSpeed[0]
+                            del sparks.particlesEndY_pos[0]
+                            del sparks.particlesEndX_pos[0]
+                            del sparks.particlesStartY_pos[0]
+                            del sparks.particlesStartX_pos[0]
+
+
+                    for i in range (len(sparks.particlesStartX_pos)):
+                        if len(sparks.particlesStartX_pos) >= 5: 
+                            if sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
+                                if sparks.particlesStartX_pos[i - 1] <= sparks.particlesEndX_pos[i - 1] and sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
+                                    fadeChunk = random.randint(6,12)
+                                    if sparks.particleFade[i - 1] > fadeChunk:
+                                        sparks.particleFade[i - 1] -= fadeChunk
+                                    elif sparks.particleFade[i - 1] < fadeChunk:
+                                        sparks.particleFade[i - 1] = 0
+                                    sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] + sparks.particlesSpeed[i - 1] 
+                                    sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,1)
+                                    pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],0), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
+                                                    
+                                elif sparks.particlesStartX_pos[i - 1] >= sparks.particlesEndX_pos[i - 1] and sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
+                                    fadeChunk = random.randint(6,12)
+                                    if sparks.particleFade[i - 1] > fadeChunk:
+                                        sparks.particleFade[i - 1] -= fadeChunk
+                                    elif sparks.particleFade[i - 1] < fadeChunk:
+                                        sparks.particleFade[i - 1] = 0
+                                    sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] - sparks.particlesSpeed[i - 1] 
+                                    sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,1)
+                                    pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],0), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
+                                   
+
+                                #elif lazerMovement == "Down":
+                                   # pass
+                            """
+                    if (len(sparks.particlesSpeed)) >= 10 and (len(sparks.particlesStartY_pos)) >= 10 and (len(sparks.particlesStartX_pos)) >= 10 and (len(sparks.particlesEndY_pos)) >= 10 and (len(sparks.particlesEndX_pos)) >= 10:
+                        if sparks.particlesStartY_pos[0] >= sparks.particlesEndY_pos[0] and lazerY < shipY + 50:
+                            sparks.particlesSpeed.remove(0)
+                            sparks.particlesEndY_pos.remove(0)
+                            sparks.particlesEndX_pos.remove(0)
+                            sparks.particlesStartX_pos.remove(0)
+                            sparks.particlesStartY_pos.remove(0)
+                            """
+
                 #Moved here for testing particles 
                 #particles(Lazer.Damage(Enemy.X_pos, Enemy.Y_pos), Lazer.X_pos, Lazer.Y_pos, "Up", Enemy.X_pos, Enemy.Y_pos)
+                if Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == True:
+                    sparks.shipHit = True
+                elif Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == False:
+                    sparks.shipHit = False
                 Sparksfun ("Up", Enemy.X_pos, Enemy.Y_pos, Lazer.X_pos, Lazer.Y_pos)
                 #sparks.flySparks(EnemyHit) 
                 #sparks.resetSparks(Enemy.X_pos, Enemy.Y_pos)
