@@ -193,8 +193,8 @@ class particles:
     def __init__ (self, Game_Screen): #funtion for testing particles 
         self.shipHit = True  
         self.particleFade =(255,255,0) #RGB
-        self.numberOfParticles = 10 
-        self.HitCount = 0
+        self.numberOfParticles = 1 
+        self.HitCount = False
         self.particlesStartX_pos = []
         self.particlesStartY_pos = []
         self.particlesEndX_pos = []
@@ -202,26 +202,14 @@ class particles:
         self.particlesSpeed = []
         self.Game_Screen = Game_Screen 
 
-    def readySparks(self, lazerMovement, shipX, shipY, lazerX, lazerY):    
-       
-        if lazerMovement == "Up" and self.HitCount == 1: #up keeps refreshing lists, rework so it only updates on impact
-            for i in range (self.numberOfParticles):
-                randomSpeed = random.randint(2, 4)
-                self.particlesSpeed.append(int(randomSpeed))
-                self.particlesStartY_pos.append(shipY)
-                self.particlesStartX_pos.append(shipX)
-                destinationX_pos = random.randint(1, 800)
-                destinationY_pos = random.randint(int(shipY), int(shipY) + 300)
-                self.particlesEndY_pos.append(int(destinationY_pos))
-                self.particlesEndX_pos.append(int(destinationX_pos))
-        elif lazerMovement == "Down":
-            pass 
-        
+    ### CONTINUE HERE!!!!
+    """    
     def flySparks(self, hit):
         if hit == True:
-            self.HitCount = 1
-        elif self.HitCount > 0:
-            for i in range (len(self.particlesEndY_pos)):
+            self.HitCount = True
+            print(self.HitCount)
+        if self.HitCount  == True:
+            for i in self.particlesSpeed:
                 if self.particlesStartY_pos[i - 1] < self.particlesEndY_pos[i - 1]:
                     if self.particlesStartX_pos[i - 1] < self.particlesEndX_pos[i - 1]:
                         self.particlesStartX_pos[i - 1] = self.particlesStartX_pos[i - 1] + self.particlesSpeed[i - 1]
@@ -232,11 +220,7 @@ class particles:
                         self.particlesStartX_pos[i - 1] = self.particlesStartX_pos[i - 1] - self.particlesSpeed[i - 1]
                         self.particlesStartY_pos[i - 1] = self.particlesStartY_pos[i - 1] + self.particlesSpeed[i - 1]
                         pygame.draw.circle(self.Game_Screen, self.particleFade, (self.particlesStartX_pos[i - 1],self.particlesStartY_pos[i - 1]), 1)
-                        
-                elif self.particlesStartY_pos[i - 1] >= self.particlesEndY_pos[i - 1]:
-                    self.HitCount = 0
-
-                            
+        """                
         # downward calculations to be added after tests      
 
 class HealthBar:
@@ -450,7 +434,9 @@ class Game:
                                     StarListX_pos[i] = Screen_Height    
                             elif StarListY_pos[i] <= 0:
                                     StarListY_pos[i] = Screen_Width
-
+                 
+                
+                
             
             if Menu == True and altMenu == 0:
                 self.Game_Screen.fill(Black_Colour)
@@ -541,21 +527,49 @@ class Game:
                 
                 Player1.Move(X_direction, Y_direction, Screen_Height, Screen_Width)
                 Player1.Draw (self.Game_Screen)
+                    
+                    ### commented out to rework particle system - create single block of code to append, blit and then remove all for the same "i" variable 
+                    
+                def Sparksfun (lazerMovement, shipX, shipY, lazerX, lazerY):    
+                    shipXPos = lazerX
+                    shipYPos = lazerY
+                    if sparks.shipHit == True:
+                        sparks.numberOfParticles += 1
+                        for i in range (12):
+                            sparks.particlesSpeed.append(int(random.randint(2, 5)))
+                            sparks.particlesStartY_pos.append(shipYPos)
+                            sparks.particlesStartX_pos.append(shipXPos)
+                            #destinationX_pos = 
+                            destinationY_pos = random.randint(int(shipYPos) + 10, int(shipYPos) + 300)
+                            sparks.particlesEndY_pos.append(int(destinationY_pos))
+                            sparks.particlesEndX_pos.append(random.randint(1, 800))
+                        
+                            for i in range (len(sparks.particlesStartY_pos)):
+                                if sparks.particlesStartY_pos[i] < sparks.particlesEndY_pos[i]:
+                                    if sparks.particlesStartX_pos[i - 1] < sparks.particlesEndX_pos[i - 1]:
+                                        sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] + sparks.particlesSpeed[i - 1]
+                                        sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1]
+                                        pygame.draw.circle(sparks.Game_Screen, sparks.particleFade, (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
+                                            
+                                    elif sparks.particlesStartX_pos[i - 1] > sparks.particlesEndX_pos[i - 1]:
+                                        sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] - sparks.particlesSpeed[i - 1]
+                                        sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1]
+                                        pygame.draw.circle(sparks.Game_Screen, sparks.particleFade, (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
 
+                                    elif lazerMovement == "Down":
+                                        pass
+                            
                 #Moved here for testing particles 
                 #particles(Lazer.Damage(Enemy.X_pos, Enemy.Y_pos), Lazer.X_pos, Lazer.Y_pos, "Up", Enemy.X_pos, Enemy.Y_pos)
-                sparks.readySparks("Up", Enemy.X_pos, Enemy.Y_pos, Lazer.X_pos, Lazer.Y_pos)
-                sparks.flySparks(Lazer.Damage(Enemy.X_pos, Enemy.Y_pos)) 
+                Sparksfun ("Up", Enemy.X_pos, Enemy.Y_pos, Lazer.X_pos, Lazer.Y_pos)
+                #sparks.flySparks(EnemyHit) 
+                #sparks.resetSparks(Enemy.X_pos, Enemy.Y_pos)
 
                 if FireLazar == True:
-                    Lazer.Fire(FireLazar,"Up",Screen_Height, self.Game_Screen)
-                    sparks.readySparks("Up", Enemy.Y_pos, Enemy.X_pos, Lazer.X_pos, Lazer.Y_pos)  
+                    Lazer.Fire(FireLazar,"Up",Screen_Height, self.Game_Screen) 
                     PlayerCharge.PlayerDraw(Lazer.Y_pos ,self.Game_Screen)
-                    sparks.readySparks("Up", Enemy.Y_pos, Enemy.X_pos, Lazer.X_pos, Lazer.Y_pos)
-                    sparks.flySparks(Lazer.Damage(Enemy.X_pos, Enemy.Y_pos)) 
                     if Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == True:
                        
-                        
                         Explode.Y_pos = Enemy.Y_pos
                         Explode.X_pos = Enemy.X_pos
                         Explode.Draw (self.Game_Screen)
