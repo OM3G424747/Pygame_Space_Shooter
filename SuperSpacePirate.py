@@ -511,7 +511,7 @@ class Game:
                             sparks.particlesSpeed.append(int(random.randint(1, 3)))
                             print(sparks.particlesSpeed)
                             sparks.particleFade.append(255) #appends list with max colour for Red and green
-                            sparks.particleFadeAlt.append(170) #appends list with colour used for blue to make yellow more white 
+                            sparks.particleFadeAlt.append(175) #appends list with colour used for blue to make yellow more white 
                             sparks.particlesStartY_pos.append(int(shipYPos))
                             sparks.particlesStartX_pos.append(int(shipXPos))
                             destinationY_pos = random.randint(int(shipY), int(shipY) + 400)
