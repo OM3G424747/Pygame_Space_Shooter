@@ -437,6 +437,9 @@ class Game:
                 if keys[pygame.K_BACKSPACE] == True: #PlaceHolder for Start input 
                     altMenu = 0
 
+            elif Menu == True and altMenu == 2: #CONTINUE HERE -> add menu for AI difficulty 
+                pass
+
             # Game Over Conditions ------------------------------------------------------------------------------------------------------------------
             elif Player1_Health.DamageTaken == 4: #sets the number of shots the player can take before it's game over
                 CPUWon = True
