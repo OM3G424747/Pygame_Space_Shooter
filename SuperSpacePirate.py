@@ -188,7 +188,7 @@ class NonPlayerCharacter(GameObject):
                 self.Speed = abs(self.Speed)
                 self.X_pos += self.Speed
             
-        
+#TODO - Add variable and lists for spheres to simulate explosions         
 class particles: #used to set the base stats and attributes for particles 
     def __init__ (self, Game_Screen): #funtion for testing particles 
         self.shipHit = False  
@@ -310,7 +310,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     Is_Game_Over = True
 
-                # CONTROLLS --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# CONTROLLS --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 keys = pygame.key.get_pressed()
 
                 if keys[pygame.K_UP] == True: #Checks for Up arrow key
@@ -511,7 +511,7 @@ class Game:
                             sparks.particlesSpeed.append(int(random.randint(1, 3)))
                             print(sparks.particlesSpeed)
                             sparks.particleFade.append(255) #appends list with max colour for Red and green
-                            sparks.particleFadeAlt.append(150) #appends list with colour used for blue to make yellow more white 
+                            sparks.particleFadeAlt.append(170) #appends list with colour used for blue to make yellow more white 
                             sparks.particlesStartY_pos.append(int(shipYPos))
                             sparks.particlesStartX_pos.append(int(shipXPos))
                             destinationY_pos = random.randint(int(shipY), int(shipY) + 400)
@@ -564,8 +564,8 @@ class Game:
                                 del sparks.particlesStartY_pos[0]
                                 del sparks.particlesStartX_pos[0]
 
-
-
+                    
+#TODO add spheres to simulate an explosions, changing from small bright yello, so orrange, red and grey - (replace regular explosions )
                     for i in range (len(sparks.particlesStartX_pos)): # used for calculating the colour fade and movement of the particles 
                         if len(sparks.particlesStartX_pos) >= 1: 
                             if sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
@@ -580,7 +580,7 @@ class Game:
                                     elif sparks.particleFade[i - 1] < fadeChunk:
                                         sparks.particleFade[i - 1] = 0
                                     sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,5)
-                                    sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,4)
+                                    sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,3)
                                     pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],sparks.particleFadeAlt[i - 1]), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
                                                     
                                 elif sparks.particlesStartX_pos[i - 1] >= sparks.particlesEndX_pos[i - 1] and sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
@@ -594,7 +594,7 @@ class Game:
                                     elif sparks.particleFade[i - 1] < fadeChunk:
                                         sparks.particleFade[i - 1] = 0
                                     sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] - sparks.particlesSpeed[i - 1] + random.randint(0,5)
-                                    sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,4)
+                                    sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,3)
                                     pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],sparks.particleFadeAlt[i - 1]), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
                                    
 
