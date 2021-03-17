@@ -301,7 +301,8 @@ class Game:
         EndGame = NonPlayerCharacter("Quit.png", 300, 750, 201, 14)
         ControlMenu = NonPlayerCharacter("ControlMenu.png", 255, 680, 284, 14 ) #Image, X, Y, Width, Height 
         RuturnToMainMenu = NonPlayerCharacter("ReturnMain.png", 100, 680, 625, 20)
-        ControlList = NonPlayerCharacter("controls.png", 55, 220, 695, 200)
+        ControlList = GameObject("controls.png", 55, 220, 695, 200)
+
         sparks = particles(self.Game_Screen)
          
 
