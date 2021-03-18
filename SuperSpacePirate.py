@@ -271,37 +271,40 @@ class Game:
         Blocks = 4 #Sets the number of hits the ships can take before it's game over
         EnemyHit = False #used to detect if the enemy ship is hit
         PlayerHit = False #used to detect if the player ship is hit
-        EnemyLazarStatusPNG = "EnemyLazerReadyStatus.png"
         Danger = False
         Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
         AI_Difficulty = 1 #lower number = easy | Higher number = hard (select number between 1 and 10)
     
         FireOkay = True
-        Player1 = PlayerCharacter("ship.png", 660,600,ship_Width,ship_Height) #creates player 1 ship character 
-        Enemy = NonPlayerCharacter("enemy.png",160,200,ship_Width,ship_Height)
-        Lazer = LazerFire("Lazer.png",Player1.X_pos, Player1.Y_pos,10,60)
-        Enemy_Lazer = LazerFire("Lazer2.png",Enemy.X_pos +35, Enemy.Y_pos,10,60)
-        Explode = LazerFire ("boom.png",Enemy.X_pos -15, Enemy.Y_pos,75,75)
+        Player1 = PlayerCharacter("assets/hud/ship.png", 660,600,ship_Width,ship_Height) #creates player 1 ship character 
+        Enemy = NonPlayerCharacter("assets/hud/enemy.png",160,200,ship_Width,ship_Height)
+        Lazer = LazerFire("assets/hud/Lazer.png",Player1.X_pos, Player1.Y_pos,10,60)
+        Enemy_Lazer = LazerFire("assets/hud/Lazer2.png",Enemy.X_pos +35, Enemy.Y_pos,10,60)
+        Explode = LazerFire ("assets/hud/boom.png",Enemy.X_pos -15, Enemy.Y_pos,75,75)
         Enemy_Health = HealthBar(10,0,Blocks)
-        EnemyHealthBorder = NonPlayerCharacter("EnemyHealthBorder.png",0,0,180,55 ) 
-        EnemyHealthCorner = NonPlayerCharacter("EnemyBorderCorner.png",Blocks * Enemy_Health.Chunks - 40,-10,80,40 )
+        EnemyHealthBorder = NonPlayerCharacter("assets/hud/EnemyHealthBorder.png",0,0,180,55 ) 
+        EnemyHealthCorner = NonPlayerCharacter("assets/hud/EnemyBorderCorner.png",Blocks * Enemy_Health.Chunks - 40,-10,80,40 )
         Player1_Health = HealthBar(470,770,Blocks)
         Player1_Health.X_pos = Screen_Width - Blocks * Player1_Health.Chunks #sets initial starting postion of player healthbar so it's adjusted according to the number of blocks selected and the size of the chunks selected
-        PlayerHealthBorder = NonPlayerCharacter("PlayerHealthBorder.png",620,740,180,55 ) 
-        PlayerHealthCorner = NonPlayerCharacter("PlayerBorderCorner.png",Screen_Width - Blocks * Player1_Health.Chunks - 6 ,765,80,40 )
-        EnemyLazarHud = NonPlayerCharacter("EnemyLazerHud.png",EnemyHealthCorner.X_pos + 100, EnemyHealthBorder.Y_pos, 140,30)
-        EnemyLazarStatus = NonPlayerCharacter(EnemyLazarStatusPNG,EnemyLazarHud.X_pos + 150, EnemyHealthBorder.Y_pos, 120,30)
+        PlayerHealthBorder = NonPlayerCharacter("assets/hud/PlayerHealthBorder.png",620,740,180,55 ) 
+        PlayerHealthCorner = NonPlayerCharacter("assets/hud/PlayerBorderCorner.png",Screen_Width - Blocks * Player1_Health.Chunks - 6 ,765,80,40 )
+        EnemyLazarHud = NonPlayerCharacter("assets/hud/EnemyLazerHud.png",EnemyHealthCorner.X_pos + 100, EnemyHealthBorder.Y_pos, 140,30)
+        EnemyLazarStatus = NonPlayerCharacter("assets/hud/EnemyLazerReadyStatus.png",EnemyLazarHud.X_pos + 150, EnemyHealthBorder.Y_pos, 120,30)
         EnemyCharge = LazarBar(EnemyLazarHud.X_pos + 150 ,EnemyHealthBorder.Y_pos ,Enemy_Lazer.X_pos, 730, Red_Colour)
-        PlayerLazarHud = NonPlayerCharacter("PlayerLazerHud.png",PlayerHealthCorner.X_pos - 290, PlayerHealthBorder.Y_pos + 25, 140,30)
-        PlayerLazarStatus = NonPlayerCharacter("PlayerLazerReadyStatus.png",PlayerLazarHud.X_pos + 150, PlayerLazarHud.Y_pos, 120,30)
+        PlayerLazarHud = NonPlayerCharacter("assets/hud/PlayerLazerHud.png",PlayerHealthCorner.X_pos - 290, PlayerHealthBorder.Y_pos + 25, 140,30)
+        PlayerLazarStatus = NonPlayerCharacter("assets/hud/PlayerLazerReadyStatus.png",PlayerLazarHud.X_pos + 150, PlayerLazarHud.Y_pos, 120,30)
         PlayerCharge = LazarBar(PlayerLazarHud.X_pos + 150, PlayerLazarHud.Y_pos ,Lazer.X_pos, 2, Blue_Colour)
-        GameOverScreen = NonPlayerCharacter("GameOver.png", 100, 300, 600, 200)
-        WinScreen = NonPlayerCharacter("win.png", 100, 300, 600, 200)
-        Logo = NonPlayerCharacter("Logo.png", 0, 0, 800, 800)
-        EndGame = NonPlayerCharacter("Quit.png", 300, 750, 201, 14)
-        ControlMenu = NonPlayerCharacter("ControlMenu.png", 255, 680, 284, 14 ) #Image, X, Y, Width, Height 
-        RuturnToMainMenu = NonPlayerCharacter("ReturnMain.png", 100, 680, 625, 20)
-        ControlList = GameObject("controls.png", 55, 220, 695, 200)
+        GameOverScreen = NonPlayerCharacter("assets/menu/GameOver.png", 100, 300, 600, 200)
+        WinScreen = NonPlayerCharacter("assets/menu/win.png", 100, 300, 600, 200)
+        Logo = NonPlayerCharacter("assets/menu/Logo.png", 0, 0, 800, 800)
+        EndGame = NonPlayerCharacter("assets/menu/Quit.png", 300, 750, 201, 14)
+        ControlMenu = NonPlayerCharacter("assets/menu/ControlMenu.png", 255, 680, 284, 14 ) #Image, X, Y, Width, Height 
+        RuturnToMainMenu = NonPlayerCharacter("assets/menu/ReturnMain.png", 100, 680, 625, 20)
+        ControlList = GameObject("assets/menu/controls.png", 55, 220, 695, 200)
+        DifficultyHeader = GameObject("assets/menu/DiffHeader.png", 55, 220, 485, 18)
+        EasySetting = GameObject("assets/menu/easy.png", 55, 320, 343, 18)
+        MediumSetting = GameObject("assets/menu/Medium.png", 55, 420, 381, 18)
+        HardSetting = GameObject("assets/menu/Hard.png", 55, 520, 419, 18)
 
         sparks = particles(self.Game_Screen)
          
@@ -424,9 +427,12 @@ class Game:
                 if keys[pygame.K_RETURN] == True: #PlaceHolder for Start input 
                     Menu = False
                     Fight = True
-                if keys[pygame.K_c] == True:
+                #TODO add option for difficulty menu ******
+                elif keys[pygame.K_c] == True:
                     altMenu = 1
-                if keys[pygame.K_ESCAPE] == True:
+                elif keys[pygame.K_d] == True:
+                    altMenu = 2
+                elif keys[pygame.K_ESCAPE] == True:
                     Is_Game_Over = True
 
             elif Menu == True and altMenu == 1:
@@ -439,7 +445,23 @@ class Game:
                     altMenu = 0
 
             elif Menu == True and altMenu == 2: #CONTINUE HERE -> add menu for AI difficulty 
-                pass
+                self.Game_Screen.fill(Black_Colour)
+                StarGenerator(1,0)
+                DifficultyHeader.Draw(self.Game_Screen)
+                EasySetting.Draw(self.Game_Screen)
+                MediumSetting.Draw(self.Game_Screen)
+                HardSetting.Draw(self.Game_Screen)
+                RuturnToMainMenu.Draw(self.Game_Screen)
+                if keys[pygame.K_BACKSPACE] == True: #PlaceHolder for Start input 
+                    altMenu = 0
+                elif keys[pygame.K_e] == True:
+                    AI_Difficulty = 2
+                elif keys[pygame.K_m] == True: #TODO Add function to draw a sqaure arround / behind the selected option ******
+                    AI_Difficulty = 5
+                elif keys[pygame.K_h] == True:
+                    AI_Difficulty = 9
+                
+            
 
             # Game Over Conditions ------------------------------------------------------------------------------------------------------------------
             elif Player1_Health.DamageTaken == 4: #sets the number of shots the player can take before it's game over
