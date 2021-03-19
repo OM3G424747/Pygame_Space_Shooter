@@ -143,7 +143,7 @@ class LazerFire(GameObject):
 class NonPlayerCharacter(GameObject):
     
     #Speed = random.randint(5, 7) #program AI to change speed at random when fired at
-    Speed = 5
+    Speed = 6
     Stop = 0
     Away_From_Border = 150 #used to check if enemy ship is away from the border to help clear it from moving into the border
     def __init__ (self, image_path, X_pos, Y_pos, Width, Height):
@@ -152,27 +152,23 @@ class NonPlayerCharacter(GameObject):
     def Move(self, TargetX_Pos, TargetY_pos, game_screen): #moves non-player in the direction of the player's current location on the X axis 
         self.Speed = 4 #reset Speed movement back 
         if self.X_pos <=  TargetX_Pos - 10:
-            self.Speed = abs(self.Speed)
+            #self.Speed = abs(self.Speed)
             self.X_pos += self.Speed #moves ship right if it's not in line
             if self.X_pos >= TargetX_Pos -10:
                 self.X_pos += self.Stop #stops ship once it's lined up
 
         elif self.X_pos >= TargetX_Pos + 10: 
-            self.Speed = -abs(self.Speed)
-            self.X_pos += self.Speed #moves ship left if it's not in line
+            #self.Speed = -abs(self.Speed)
+            self.X_pos -= self.Speed #moves ship left if it's not in line
             if self.X_pos >= TargetX_Pos +10: 
                 self.X_pos += self.Stop #stops ship once it's lined up
          
-    def LurePlayer (self,NewMoveX_pos,NewMoveY_pos): #creat a function to make the AI lure the player to attempt to attack it
-        pass
-
-
 
     def Panic(self, Danger, DangerX_pos, game_screen): #causes non-player character to move at a faster pace away from player's lazer to try and escape danger 
-        self.Speed = 6 #boosts movement speed when it panic mode
         DangerX_pos = DangerX_pos - 35 #Calibrates lazer Xpos to check with the center of the ship
 
         if Danger == True and self.X_pos <= DangerX_pos: #Checks if enemy ship is to the left side of the Lazer and moves the ship right if it is 
+            self.Speed = 7
             if self.X_pos <= self.Away_From_Border and DangerX_pos < self.Away_From_Border:
                 self.Speed = abs(self.Speed)
                 self.X_pos += self.Speed
@@ -181,12 +177,24 @@ class NonPlayerCharacter(GameObject):
                 self.X_pos += self.Speed 
         
         elif Danger == True and self.X_pos >= DangerX_pos: #Checks if enemy ship is to the right side of the Lazer and moves the ship right if it is 
+            self.Speed = 7
             if self.X_pos > game_screen - self.Away_From_Border and DangerX_pos > game_screen - self.Away_From_Border: 
-                self.Speed = -abs(self.Speed)
-                self.X_pos += self.Speed
+                self.X_pos -= self.Speed
             elif self.X_pos < game_screen - self.Away_From_Border: 
-                self.Speed = abs(self.Speed)
                 self.X_pos += self.Speed
+                
+
+    def LurePlayer (self,PlayerX_Pos, PlayerY_pos, RandomInt): #creat a function to make the AI lure the player to attempt to attack it
+        if PlayerY_pos <= self.Y_pos + 250 and self.Y_pos >= 50: 
+            self.Y_pos -= self.Speed #Panic function turns this into a charge where the ship attacks the player
+            if self.Y_pos < 150:
+                self.Y_pos += self.Speed
+        elif PlayerY_pos >= self.Y_pos + 300:
+            self.Y_pos += self.Speed
+        #use random int to change abs speed to negative and charge the player at random 
+
+        
+             
             
 #TODO - Add variable and lists for spheres to simulate explosions         
 class particles: #used to set the base stats and attributes for particles 
@@ -216,7 +224,7 @@ class HealthBar:
             ColourReduction = self.FullColour / TotalBlocks #determines the percetentage of the colour to be reduced according to the number of blocks selected
             green = self.FullColour - ColourReduction * self.DamageTaken #Used to calculate by how much green will be reduced on the RGB scale
             red = ColourReduction * self.DamageTaken #Determines how much red will be added on the RGB scale 
-            self.colour = (red,green,0)
+            self.colour = (int(red),int(green),0)
      
     def Draw (self, Game_Screen):
         pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.TotalBlocks,25]) #sets surface, colour and X-pos,Y-pos+size for the bar to be drawn.
@@ -273,7 +281,7 @@ class Game:
         PlayerHit = False #used to detect if the player ship is hit
         Danger = False
         Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
-        AI_Difficulty = 1 #lower number = easy | Higher number = hard (select number between 1 and 10)
+        AI_Difficulty = 6 #lower number = easy | Higher number = hard (select number between 1 and 10)
     
         FireOkay = True
         Player1 = PlayerCharacter("assets/hud/ship.png", 660,600,ship_Width,ship_Height) #creates player 1 ship character 
@@ -298,13 +306,15 @@ class Game:
         WinScreen = NonPlayerCharacter("assets/menu/win.png", 100, 300, 600, 200)
         Logo = NonPlayerCharacter("assets/menu/Logo.png", 0, 0, 800, 800)
         EndGame = NonPlayerCharacter("assets/menu/Quit.png", 300, 750, 201, 14)
-        ControlMenu = NonPlayerCharacter("assets/menu/ControlMenu.png", 255, 680, 284, 14 ) #Image, X, Y, Width, Height 
+        ControlMenu = NonPlayerCharacter("assets/menu/ControlMenu.png", 255, 710, 284, 14 ) #Image, X, Y, Width, Height 
+        SettingsMenu = GameObject("assets/menu/SettingsMenu.png", 155, 660, 504, 18)
         RuturnToMainMenu = NonPlayerCharacter("assets/menu/ReturnMain.png", 100, 680, 625, 20)
         ControlList = GameObject("assets/menu/controls.png", 55, 220, 695, 200)
-        DifficultyHeader = GameObject("assets/menu/DiffHeader.png", 55, 220, 485, 18)
-        EasySetting = GameObject("assets/menu/easy.png", 55, 320, 343, 18)
-        MediumSetting = GameObject("assets/menu/Medium.png", 55, 420, 381, 18)
-        HardSetting = GameObject("assets/menu/Hard.png", 55, 520, 419, 18)
+        DifficultyHeader = GameObject("assets/menu/DiffHeader.png", 100, 220, 485, 18)
+        EasySetting = GameObject("assets/menu/easy.png", 100, 320, 343, 18)
+        MediumSetting = GameObject("assets/menu/Medium.png", 100, 420, 381, 18)
+        HardSetting = GameObject("assets/menu/Hard.png", 100, 520, 419, 18)
+        
 
         sparks = particles(self.Game_Screen)
          
@@ -422,6 +432,7 @@ class Game:
                 StarGenerator(0,-1) #used to make the stars move down while on the main screen
                 EndGame.Draw(self.Game_Screen)
                 ControlMenu.Draw(self.Game_Screen)
+                SettingsMenu.Draw(self.Game_Screen)
                                   
                 Logo.Draw(self.Game_Screen) #PlaceHolder Logo for Main Menu
                 if keys[pygame.K_RETURN] == True: #PlaceHolder for Start input 
@@ -430,7 +441,7 @@ class Game:
                 #TODO add option for difficulty menu ******
                 elif keys[pygame.K_c] == True:
                     altMenu = 1
-                elif keys[pygame.K_d] == True:
+                elif keys[pygame.K_s] == True:
                     altMenu = 2
                 elif keys[pygame.K_ESCAPE] == True:
                     Is_Game_Over = True
@@ -456,10 +467,13 @@ class Game:
                     altMenu = 0
                 elif keys[pygame.K_e] == True:
                     AI_Difficulty = 2
+                    pygame.draw.rect(self.Game_Screen, White_Colour, [EasySetting.X_pos,EasySetting.Y_pos + 30,450,25])
                 elif keys[pygame.K_m] == True: #TODO Add function to draw a sqaure arround / behind the selected option ******
                     AI_Difficulty = 5
+                    pygame.draw.rect(self.Game_Screen, White_Colour, [EasySetting.X_pos,MediumSetting.Y_pos + 30,450,25])
                 elif keys[pygame.K_h] == True:
                     AI_Difficulty = 9
+                    pygame.draw.rect(self.Game_Screen, White_Colour, [EasySetting.X_pos,HardSetting.Y_pos + 30,450,25])
                 
             
 
@@ -477,7 +491,7 @@ class Game:
                     self.run_game_loop()
                     
                 
-            elif Enemy_Health.DamageTaken == 10: #sets the number of shots the enemy can take before it's game over
+            elif Enemy_Health.DamageTaken == 5: #sets the number of shots the enemy can take before it's game over
                 PlayerWon = True
                 Fight = False  
                 self.Game_Screen.fill(Black_Colour)
@@ -495,7 +509,7 @@ class Game:
                 self.Game_Screen.fill(Black_Colour)
                 StarGenerator(Y_direction, X_direction) #Generates stars that move in the opposite direction to the player      
                 
-
+                Enemy.LurePlayer( Player1.X_pos, Player1.Y_pos, 1 ) #1 is a playerholder for a random int to be added 
                 if FireLazar == True: #Enemy AI conditions used to check if the player has fired their lazer
                     if Lazer.X_pos >= Enemy.X_pos - 10 and Lazer.X_pos <= Enemy.X_pos + 85 and Lazer.Y_pos >= Enemy.Y_pos + 80: 
                         if Random_Mistake <= AI_Difficulty:
@@ -525,48 +539,31 @@ class Game:
                     
                     ### commented out to rework particle system - create single block of code to append, blit and then remove all for the same "i" variable 
                     
-                def Sparksfun (lazerMovement, shipX, shipY, lazerX, lazerY):    
+                def Sparksfun (lazerMovement, shipX, shipY, lazerX, lazerY, Hit):    
                     shipXPos = lazerX
                     shipYPos = lazerY
                     count = 0
+                    if Hit == True: 
+                        sparks.shipHit = True 
+                    elif Hit == False:
+                        sparks.shipHit = False
+
                     if sparks.shipHit == True:
                         for i in range (3):
-                            sparks.particlesSpeed.append(int(random.randint(1, 3)))
-                            print(sparks.particlesSpeed)
+                            sparks.particlesSpeed.append(abs(int(random.randint(1, 3))))
                             sparks.particleFade.append(255) #appends list with max colour for Red and green
                             sparks.particleFadeAlt.append(175) #appends list with colour used for blue to make yellow more white 
                             sparks.particlesStartY_pos.append(int(shipYPos))
                             sparks.particlesStartX_pos.append(int(shipXPos))
-                            destinationY_pos = random.randint(int(shipY), int(shipY) + 400)
+                            if lazerMovement == "Up":
+                                destinationY_pos = random.randint(int(shipY), int(shipY) + 400)
+                            elif lazerMovement == "Down":
+                                destinationY_pos = random.randint(int(shipY) - 400, int(shipY))
                             sparks.particlesEndY_pos.append(int(destinationY_pos))
                             if shipX + 38 > lazerX: #checks if the lazer it the left side of the ship
                                 sparks.particlesEndX_pos.append(random.randint(int(shipX - 800), int(shipX + 37)))
                             elif shipX + 36 < lazerX: #checks if the lazer it the rigth side of the ship
                                 sparks.particlesEndX_pos.append(random.randint(int(shipX), int(shipX + 800)))
-                    
-                                """
-                        if len(sparks.particlesStartX_pos) > count: #adjust so it continues to delete the list even if shipHit is false
-                            if sparks.particlesStartX_pos[count] <= sparks.particlesEndX_pos[count] and sparks.particlesStartY_pos[count] in sparks.particlesStartY_pos:
-                                del sparks.particlesSpeed[count]
-                                del sparks.particleFade[count]
-                                del sparks.particleFadeAlt[count]
-                                del sparks.particlesEndY_pos[count]
-                                del sparks.particlesEndX_pos[count]
-                                del sparks.particlesStartY_pos[count]
-                                del sparks.particlesStartX_pos[count]
-                                count += 1
-        
-                        elif len(sparks.particlesStartX_pos) < count:
-                            count -= 1
-                            if len(sparks.particlesStartX_pos) > 1:
-                                del sparks.particlesSpeed[0]
-                                del sparks.particleFade[0]
-                                del sparks.particleFadeAlt[0]
-                                del sparks.particlesEndY_pos[0]
-                                del sparks.particlesEndX_pos[0]
-                                del sparks.particlesStartY_pos[0]
-                                del sparks.particlesStartX_pos[0]
-                                """
 
                     elif sparks.shipHit == False:
                         if len(sparks.particlesStartX_pos) > 1: #adjust so it continues to delete the list even if shipHit is false
@@ -589,48 +586,77 @@ class Game:
 
                     
 #TODO add spheres to simulate an explosions, changing from small bright yello, so orrange, red and grey - (replace regular explosions )
-                    for i in range (len(sparks.particlesStartX_pos)): # used for calculating the colour fade and movement of the particles 
-                        if len(sparks.particlesStartX_pos) >= 1: 
-                            if sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
-                                if sparks.particlesStartX_pos[i - 1] <= sparks.particlesEndX_pos[i - 1] and sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
-                                    fadeChunk = random.randint(2,7) #used to randomly calculate the amount the sparks will fade by
-                                    if sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] > fadeChunk:
-                                        sparks.particleFade[i - 1] -= fadeChunk
-                                        sparks.particleFadeAlt[i - 1] -= fadeChunk
-                                    elif sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] < fadeChunk:
-                                        sparks.particleFade[i - 1] -= fadeChunk
-                                        sparks.particleFadeAlt[i - 1] = 0
-                                    elif sparks.particleFade[i - 1] < fadeChunk:
-                                        sparks.particleFade[i - 1] = 0
-                                    sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,5)
-                                    sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,3)
-                                    pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],sparks.particleFadeAlt[i - 1]), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
-                                                    
-                                elif sparks.particlesStartX_pos[i - 1] >= sparks.particlesEndX_pos[i - 1] and sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
-                                    fadeChunk = random.randint(2,7)
-                                    if sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] > fadeChunk:
-                                        sparks.particleFade[i - 1] -= fadeChunk
-                                        sparks.particleFadeAlt[i - 1] -= fadeChunk
-                                    elif sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] < fadeChunk:
-                                        sparks.particleFade[i - 1] -= fadeChunk
-                                        sparks.particleFadeAlt[i - 1] = 0
-                                    elif sparks.particleFade[i - 1] < fadeChunk:
-                                        sparks.particleFade[i - 1] = 0
-                                    sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] - sparks.particlesSpeed[i - 1] + random.randint(0,5)
-                                    sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,3)
-                                    pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],sparks.particleFadeAlt[i - 1]), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
+                    if lazerMovement == "Up":
+                        for i in range (len(sparks.particlesStartX_pos)): # used for calculating the colour fade and movement of the particles 
+                            if len(sparks.particlesStartX_pos) >= 1: 
+                                if sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
+                                    if sparks.particlesStartX_pos[i - 1] <= sparks.particlesEndX_pos[i - 1] and sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
+                                        fadeChunk = random.randint(1,6) #used to randomly calculate the amount the sparks will fade by
+                                        if sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] > fadeChunk:
+                                            sparks.particleFade[i - 1] -= fadeChunk
+                                            sparks.particleFadeAlt[i - 1] -= fadeChunk
+                                        elif sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] < fadeChunk:
+                                            sparks.particleFade[i - 1] -= fadeChunk
+                                            sparks.particleFadeAlt[i - 1] = 0
+                                        elif sparks.particleFade[i - 1] < fadeChunk:
+                                            sparks.particleFade[i - 1] = 0
+                                        sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,5)
+                                        sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,3)
+                                        pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],sparks.particleFadeAlt[i - 1]), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
+                                                        
+                                    elif sparks.particlesStartX_pos[i - 1] >= sparks.particlesEndX_pos[i - 1] and sparks.particlesStartY_pos[i - 1] < sparks.particlesEndY_pos[i - 1]:
+                                        fadeChunk = random.randint(2,7)
+                                        if sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] > fadeChunk:
+                                            sparks.particleFade[i - 1] -= fadeChunk
+                                            sparks.particleFadeAlt[i - 1] -= fadeChunk
+                                        elif sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] < fadeChunk:
+                                            sparks.particleFade[i - 1] -= fadeChunk
+                                            sparks.particleFadeAlt[i - 1] = 0
+                                        elif sparks.particleFade[i - 1] < fadeChunk:
+                                            sparks.particleFade[i - 1] = 0
+
+                                        sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] - sparks.particlesSpeed[i - 1] + random.randint(0,5)
+                                        sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,3)
+                                        pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],sparks.particleFadeAlt[i - 1]), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
                                    
 
-                                #elif lazerMovement == "Down":
-                                   # pass
+                    elif lazerMovement == "Down":
+                        for i in range (len(sparks.particlesStartX_pos)): # used for calculating the colour fade and movement of the particles 
+                            if len(sparks.particlesStartX_pos) >= 1: 
+                                if sparks.particlesStartY_pos[i - 1] > sparks.particlesEndY_pos[i - 1]:
+                                    if sparks.particlesStartX_pos[i - 1] <= sparks.particlesEndX_pos[i - 1] and sparks.particlesStartY_pos[i - 1] > sparks.particlesEndY_pos[i - 1]:
+                                        fadeChunk = random.randint(1,6) #used to randomly calculate the amount the sparks will fade by
+                                        if sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] > fadeChunk:
+                                            sparks.particleFade[i - 1] -= fadeChunk
+                                            sparks.particleFadeAlt[i - 1] -= fadeChunk
+                                        elif sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] < fadeChunk:
+                                            sparks.particleFade[i - 1] -= fadeChunk
+                                            sparks.particleFadeAlt[i - 1] = 0
+                                        elif sparks.particleFade[i - 1] < fadeChunk:
+                                            sparks.particleFade[i - 1] = 0
+                                        sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,5)
+                                        sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,3)
+                                        pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],sparks.particleFadeAlt[i - 1]), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
+                                                        
+                                    elif sparks.particlesStartX_pos[i - 1] >= sparks.particlesEndX_pos[i - 1] and sparks.particlesStartY_pos[i - 1] > sparks.particlesEndY_pos[i - 1]:
+                                        fadeChunk = random.randint(2,7)
+                                        if sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] > fadeChunk:
+                                            sparks.particleFade[i - 1] -= fadeChunk
+                                            sparks.particleFadeAlt[i - 1] -= fadeChunk
+                                        elif sparks.particleFade[i - 1] > fadeChunk and sparks.particleFadeAlt[i - 1] < fadeChunk:
+                                            sparks.particleFade[i - 1] -= fadeChunk
+                                            sparks.particleFadeAlt[i - 1] = 0
+                                        elif sparks.particleFade[i - 1] < fadeChunk:
+                                            sparks.particleFade[i - 1] = 0
+
+                                        sparks.particlesStartX_pos[i - 1] = sparks.particlesStartX_pos[i - 1] - sparks.particlesSpeed[i - 1] + random.randint(0,5)
+                                        sparks.particlesStartY_pos[i - 1] = sparks.particlesStartY_pos[i - 1] + sparks.particlesSpeed[i - 1] - random.randint(0,3)
+                                        pygame.draw.circle(sparks.Game_Screen, (sparks.particleFade[i - 1],sparks.particleFade[i - 1],sparks.particleFadeAlt[i - 1]), (sparks.particlesStartX_pos[i - 1],sparks.particlesStartY_pos[i - 1]), 1)
                    
 
                 #Moved here for testing particles 
-                if Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == True:
-                    sparks.shipHit = True
-                elif Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == False:
-                    sparks.shipHit = False
-                Sparksfun ("Up", Enemy.X_pos, Enemy.Y_pos, Lazer.X_pos, Lazer.Y_pos)
+                
+                Sparksfun ("Up", Enemy.X_pos, Enemy.Y_pos, Lazer.X_pos, Lazer.Y_pos, Lazer.Damage(Enemy.X_pos, Enemy.Y_pos))
               
 
                 if FireLazar == True:
@@ -641,7 +667,8 @@ class Game:
                         Explode.Y_pos = Enemy.Y_pos
                         Explode.X_pos = Enemy.X_pos
                         Explode.Draw (self.Game_Screen)
-                        
+
+#TODO - adjust so that the ammount reduced in chunks is caculated by the value of damage ... EG - 1 damage = 100 blocks, 0.5 damage - 50 blocks                        
                         EnemyHit = True
                     elif EnemyHit == True and Lazer.Damage(Enemy.X_pos, Enemy.Y_pos) == False: #used to adjust the enemy health bar after being hit by the player's lazer
                         Enemy_Health.TotalBlocks = Enemy_Health.TotalBlocks - Enemy_Health.Chunks
@@ -655,6 +682,7 @@ class Game:
                 if FireLazar == False:
                     PlayerLazarStatus.Draw(self.Game_Screen)
 
+                
                 if EnemyLazar == False:
                     EnemyLazarStatus.Draw(self.Game_Screen)  
                 if LazerCount == 1: #detects if lazer fire was queued by the AI due to the player being in range
@@ -668,7 +696,7 @@ class Game:
                             Random_Mistake = random.randint(1,10) #Reset the Random int to give the AI a chance to mess up during their next shot. Only resets after enemy fire to avoid Enemy getting hit by "player lazer spam"
                             LazerCount = 0 #removes the queued lazer so the AI can add another
                         
-                
+                    Sparksfun("Down", Player1.X_pos, Player1.Y_pos, Enemy_Lazer.X_pos, Enemy_Lazer.Y_pos, Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos))
                     if Enemy_Lazer.Damage(Player1.X_pos, Player1.Y_pos) == True: #Conditions for player taking damager by enemy ship
                         Explode.Y_pos = Player1.Y_pos
                         Explode.X_pos = Player1.X_pos
