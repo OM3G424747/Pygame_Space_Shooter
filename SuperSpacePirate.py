@@ -84,20 +84,20 @@ class PlayerCharacter(GameObject):
         if Y_direction > 0 and X_direction == 0:
             self.Y_pos = self.Y_pos - self.Speed #used to make the Ship go up
         elif Y_direction > 0 and X_direction > 0: #Up and left combined (Combined movement devided to match regular speed)
-            self.Y_pos = self.Y_pos - self.Speed /1.5
-            self.X_pos = self.X_pos - self.Speed /1.5
+            self.Y_pos = self.Y_pos - self.Speed *0.5
+            self.X_pos = self.X_pos - self.Speed *0.5
         elif Y_direction > 0 and X_direction < 0: #Up and right combined (Combined movement devided to match regular speed)
-            self.Y_pos = self.Y_pos - self.Speed /1.5
-            self.X_pos = self.X_pos + self.Speed /1.5
+            self.Y_pos = self.Y_pos - self.Speed *0.5
+            self.X_pos = self.X_pos + self.Speed *0.5
 
         elif Y_direction < 0 and X_direction == 0:
             self.Y_pos = self.Y_pos + self.Speed #used to make the Ship go down
         elif Y_direction < 0 and X_direction > 0: #Down and left combined (Combined movement devided to match regular speed)
-            self.Y_pos = self.Y_pos + self.Speed /1.5
-            self.X_pos = self.X_pos - self.Speed /1.5
+            self.Y_pos = self.Y_pos + self.Speed *0.5
+            self.X_pos = self.X_pos - self.Speed *0.5
         elif Y_direction < 0 and X_direction < 0: #Down and right combined (Combined movement devided to match regular speed)
-            self.Y_pos = self.Y_pos + self.Speed /1.5 
-            self.X_pos = self.X_pos + self.Speed /1.5 
+            self.Y_pos = self.Y_pos + self.Speed *0.5 
+            self.X_pos = self.X_pos + self.Speed *0.5 
 
         elif X_direction > 0 and Y_direction == 0:
             self.X_pos = self.X_pos - self.Speed #used to make the Ship go left
