@@ -23,343 +23,341 @@ import random
 import math
 import os
 
-Screen_Width = 800
-Screen_Height = 800
-Screen_Title = "Super Space Pirate" #Sets name on gamewindow 
-White_Colour = (255,255,255) #colours set according to RGB - R 255 G 255  B 255
-Black_Colour = (0,0,0)
-Red_Colour = (255,0,0)
-Green_Colour = (0,255,0)
-Blue_Colour = (0,0,255)
-Grey_Colour = (100,100,100)
-LightGrey_Colour = (200,200,200)
-ship_Width = 75
-ship_Height = 75
-Clock = pygame.time.Clock()
+screen_width = 800
+screen_height = 800
+screen_title = "Super Space Pirate" #Sets name on gamewindow 
+white_colour = (255,255,255) #colours set according to RGB - R 255 G 255  B 255
+black_colour = (0,0,0)
+red_colour = (255,0,0)
+green_colour = (0,255,0)
+blue_colour = (0,0,255)
+grey_colour = (100,100,100)
+lightgrey_colour = (200,200,200)
+ship_width = 75
+ship_height = 75
+clock = pygame.time.Clock()
 
-TotalStars = 250 #  - USED TO Create randomly generated night sky
-StarListX_pos = random.sample(range(1, 800), TotalStars ) #  - USED TO Create randomly generated night sky
-StarListY_pos = random.sample(range(1, 800), TotalStars ) #  - USED TO Create randomly generated night sky
-StarListSpeed = [] #used to generate speed for stars that seem closer
-FarStarListSpeed = []
-StarListBool = [] #list used to determine if a star is near or far
-for i in range(len(StarListY_pos)): #generates bool values for the star list
-    RandomBool = random.randint(0,1)
-    if RandomBool == 1:
-        StarListBool.append(True)
-    elif RandomBool == 0:
-        StarListBool.append(False)
+totalstars = 250 #  - USED TO Create randomly generated night sky
+starlist_xpos = random.sample(range(1, 800), totalstars ) #  - USED TO Create randomly generated night sky
+starlist_ypos = random.sample(range(1, 800), totalstars ) #  - USED TO Create randomly generated night sky
+starlist_speed = [] #used to generate speed for stars that seem closer
+farstarlist_speed = []
+starlist_bool = [] #list used to determine if a star is near or far
+for i in range(len(starlist_ypos)): #generates bool values for the star list
+    random_bool = random.randint(0,1)
+    if random_bool == 1:
+        starlist_bool.append(True)
+    elif random_bool == 0:
+        starlist_bool.append(False)
 
-for i in range(len(StarListY_pos)): #generates an int values for the star list
-    RandomSpeed = random.randint(4,6)
-    StarListSpeed.append(RandomSpeed)
-for i in range(len(StarListY_pos)): #generates an int values for the star list
-    RandomSpeed = random.randint(1,3)
-    FarStarListSpeed.append(RandomSpeed)
-   
-
+for i in range(len(starlist_ypos)): #generates an int values for the star list
+    random_speed = random.randint(4,6)
+    starlist_speed.append(random_speed)
+for i in range(len(starlist_ypos)): #generates an int values for the star list
+    random_speed_far = random.randint(1,3)
+    farstarlist_speed.append(random_speed_far)
 
 
-class GameObject: #class for defining game objects that will be drawn onto the game screen and moved arround
-    def __init__(self, image_path, X_pos, Y_pos, Width, Height):
-        Object_Image = pygame.image.load(image_path) #Loads image to be set
-        self.Image = pygame.transform.scale(Object_Image, (Width, Height)) #Scales the image that's been loaded in 
-        self.X_pos = X_pos
-        self.Y_pos = Y_pos
-        self.Width = Width
-        self.Height = Height
+class game_object: #class for defining game objects that will be drawn onto the game screen and moved arround
+    def __init__(self, image_path, x_pos, y_pos, width, height):
+        object_image = pygame.image.load(image_path) #Loads image to be set
+        self.image = pygame.transform.scale(object_image, (width, height)) #Scales the image that's been loaded in 
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.width = width
+        self.height = height
     
-    def Draw (self,background): #This function is used to draw the object on the game screen
-        background.blit(self.Image,(self.X_pos,self.Y_pos)) #Blit funtion is used to draw imaghes to the game screen/ surface selected along with the X and Y Pos taken in the form of a tuple 
+    def draw (self,background): #This function is used to draw the object on the game screen
+        background.blit(self.image,(self.x_pos,self.y_pos)) #Blit funtion is used to draw imaghes to the game screen/ surface selected along with the X and Y Pos taken in the form of a tuple 
         
 
-class PlayerCharacter(GameObject):
+class player_obj(game_object):
     
-    Speed = 10 
+    speed = 10 
 
-    def __init__ (self, image_path, X_pos, Y_pos, Width, Height):
-       GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
+    def __init__ (self, image_path, x_pos, y_pos, width, height):
+        game_object.__init__(self, image_path, x_pos, y_pos, width, height)
     
-    def Move(self, X_direction, Y_direction, Max_Height, Max_Width): #Checks input for player
-        if Y_direction > 0 and X_direction == 0:
-            self.Y_pos = self.Y_pos - self.Speed #used to make the Ship go up
-        elif Y_direction > 0 and X_direction > 0: #Up and left combined (Combined movement devided to match regular speed)
-            self.Y_pos = self.Y_pos - self.Speed *0.5
-            self.X_pos = self.X_pos - self.Speed *0.5
-        elif Y_direction > 0 and X_direction < 0: #Up and right combined (Combined movement devided to match regular speed)
-            self.Y_pos = self.Y_pos - self.Speed *0.5
-            self.X_pos = self.X_pos + self.Speed *0.5
+    def Move(self, x_direction, y_direction, max_height, max_width): #Checks input for player
+        if y_direction > 0 and x_direction == 0:
+            self.y_pos = self.y_pos - self.speed #used to make the Ship go up
+        elif y_direction > 0 and x_direction > 0: #Up and left combined (Combined movement devided to match regular speed)
+            self.y_pos = self.y_pos - self.speed *0.5
+            self.x_pos = self.x_pos - self.speed *0.5
+        elif y_direction > 0 and x_direction < 0: #Up and right combined (Combined movement devided to match regular speed)
+            self.y_pos = self.y_pos - self.speed *0.5
+            self.s_pos = self.x_pos + self.speed *0.5
 
-        elif Y_direction < 0 and X_direction == 0:
-            self.Y_pos = self.Y_pos + self.Speed #used to make the Ship go down
-        elif Y_direction < 0 and X_direction > 0: #Down and left combined (Combined movement devided to match regular speed)
-            self.Y_pos = self.Y_pos + self.Speed *0.5
-            self.X_pos = self.X_pos - self.Speed *0.5
-        elif Y_direction < 0 and X_direction < 0: #Down and right combined (Combined movement devided to match regular speed)
-            self.Y_pos = self.Y_pos + self.Speed *0.5 
-            self.X_pos = self.X_pos + self.Speed *0.5 
+        elif y_direction < 0 and x_direction == 0:
+            self.y_pos = self.y_pos + self.speed #used to make the Ship go down
+        elif y_direction < 0 and x_direction > 0: #Down and left combined (Combined movement devided to match regular speed)
+            self.y_pos = self.y_pos + self.speed *0.5
+            self.x_pos = self.y_pos - self.speed *0.5
+        elif y_direction < 0 and x_direction < 0: #Down and right combined (Combined movement devided to match regular speed)
+            self.y_pos = self.y_pos + self.speed *0.5 
+            self.x_pos = self.x_pos + self.speed *0.5 
 
-        elif X_direction > 0 and Y_direction == 0:
-            self.X_pos = self.X_pos - self.Speed #used to make the Ship go left
-        elif X_direction < 0 and Y_direction == 0:
-            self.X_pos = self.X_pos + self.Speed #used to make the Ship go right 
-           
-        
-        if self.Y_pos >= Max_Height - 120: #sets collision detection for bottom of the screen for player to make sure they don't go over the health bar or off the screen 
-            self.Y_pos = Max_Height - 120
-        if self.Y_pos <= 50: #sets collision detection for top of the screen for player to make sure they don't go over the health bar or off the screen 
-            self.Y_pos = 50
-        if self.X_pos >= Max_Width - 80:
-            self.X_pos = Max_Width - 80
-        if self.X_pos <= 5:
-            self.X_pos = 5
+        elif x_direction > 0 and y_direction == 0:
+            self.x_pos = self.x_pos - self.speed #used to make the Ship go left
+        elif x_direction < 0 and y_direction == 0:
+            self.x_pos = self.x_pos + self.speed #used to make the Ship go right 
 
-   
-class LazerFire(GameObject):
-    Speed = 10
-    
-    def __init__(self, image_path, X_pos, Y_pos, Width, Height):
-        GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)   
-    
-    def Fire (self, Fire, Direction, Height, Game_Screen):
-        if Fire == True:
-            self.Draw(Game_Screen)
-            if Direction == "Up":
-                if self.Y_pos >= 0:
-                    self.Y_pos = self.Y_pos - self.Speed
+
+        if self.y_pos >= max_height - 120: #sets collision detection for bottom of the screen for player to make sure they don't go over the health bar or off the screen 
+            self.y_pos = max_height - 120
+        if self.y_pos <= 50: #sets collision detection for top of the screen for player to make sure they don't go over the health bar or off the screen 
+            self.y_pos = 50
+        if self.x_pos >= max_width - 80:
+            self.x_pos = max_width - 80
+        if self.x_pos <= 5:
+            self.x_pos = 5
+
+
+class lazer_obj(game_object):
+    speed = 10
+
+    def __init__(self, image_path, x_pos, y_pos, width, height):
+        game_object.__init__(self, image_path, x_pos, y_pos, width, height)   
+
+    def fire (self, fire, direction, height, game_screen):
+        if fire == True:
+            self.draw(game_screen)
+            if direction == "Up":
+                if self.y_pos >= 0:
+                    self.y_pos = self.y_pos - self.speed
                     
-            elif Direction == "Down":
-                if self.Y_pos <= Height:
-                    self.Y_pos = self.Y_pos + self.Speed
+            elif direction == "Down":
+                if self.y_pos <= height:
+                    self.y_pos = self.y_pos + self.speed
                     
-    
-    def Damage (self, enemy_X_Pos, enemy_Y_Pos): #Colision detection for Lazer on Enemy ship
-        if enemy_X_Pos - 5 < self.X_pos and enemy_X_Pos + 75 > self.X_pos and enemy_Y_Pos - 15 < self.Y_pos and enemy_Y_Pos + 80 > self.Y_pos:
+
+    def damage (self, enemy_x_pos, enemy_y_pos): #Colision detection for Lazer on Enemy ship
+        if enemy_x_pos - 5 < self.x_pos and enemy_x_pos + 75 > self.x_pos and enemy_y_pos - 15 < self.y_pos and enemy_y_pos + 80 > self.y_pos:
             return True
         else:
             return False
-        
-       
-class NonPlayerCharacter(GameObject):
+
+
+class nonplayer_obj(game_object):
     
     #Speed = random.randint(5, 7) #program AI to change speed at random when fired at
-    Speed = 6
-    Stop = 0
-    Away_From_Border = 150 #used to check if enemy ship is away from the border to help clear it from moving into the border
-    def __init__ (self, image_path, X_pos, Y_pos, Width, Height):
-       GameObject.__init__(self, image_path, X_pos, Y_pos, Width, Height)
+    speed = 6
+    stop = 0
+    away_from_border = 150 #used to check if enemy ship is away from the border to help clear it from moving into the border
+    def __init__ (self, image_path, x_pos, y_pos, width, height):
+        game_object.__init__(self, image_path, x_pos, y_pos, width, height)
     
-    def Move(self, TargetX_Pos, TargetY_pos, game_screen): #moves non-player in the direction of the player's current location on the X axis 
-        self.Speed = 4 #reset Speed movement back 
-        if self.X_pos <=  TargetX_Pos - 10:
+    def move(self, target_x_pos, target_y_pos, game_screen): #moves non-player in the direction of the player's current location on the X axis 
+        self.speed = 4 #reset Speed movement back 
+        if self.x_pos <=  target_x_pos - 10:
             #self.Speed = abs(self.Speed)
-            self.X_pos += self.Speed #moves ship right if it's not in line
-            if self.X_pos >= TargetX_Pos -10:
-                self.X_pos += self.Stop #stops ship once it's lined up
+            self.x_pos += self.speed #moves ship right if it's not in line
+            if self.x_pos >= target_x_pos -10:
+                self.x_pos += self.stop #stops ship once it's lined up
 
-        elif self.X_pos >= TargetX_Pos + 10: 
+        elif self.x_pos >= target_x_pos + 10: 
             #self.Speed = -abs(self.Speed)
-            self.X_pos -= self.Speed #moves ship left if it's not in line
-            if self.X_pos >= TargetX_Pos +10: 
-                self.X_pos += self.Stop #stops ship once it's lined up
-         
+            self.x_pos -= self.speed #moves ship left if it's not in line
+            if self.x_pos >= target_x_pos +10: 
+                self.x_pos += self.stop #stops ship once it's lined up
 
-    def Panic(self, Danger, DangerX_pos, game_screen): #causes non-player character to move at a faster pace away from player's lazer to try and escape danger 
-        DangerX_pos = DangerX_pos - 35 #Calibrates lazer Xpos to check with the center of the ship
 
-        if Danger == True and self.X_pos <= DangerX_pos: #Checks if enemy ship is to the left side of the Lazer and moves the ship right if it is 
-            self.Speed = 7
-            if self.X_pos <= self.Away_From_Border and DangerX_pos < self.Away_From_Border:
-                self.Speed = abs(self.Speed)
-                self.X_pos += self.Speed
+    def panic(self, danger, danger_x_pos, game_screen): #causes non-player character to move at a faster pace away from player's lazer to try and escape danger 
+        danger_x_pos = danger_x_pos - 35 #Calibrates lazer Xpos to check with the center of the ship
+
+        if danger == True and self.x_pos <= danger_x_pos: #Checks if enemy ship is to the left side of the Lazer and moves the ship right if it is 
+            self.speed = 7
+            if self.x_pos <= self.away_from_border and danger_x_pos < self.away_from_border:
+                self.speed = abs(self.speed)
+                self.x_pos += self.speed
             else:
-                self.Speed = -abs(self.Speed)
-                self.X_pos += self.Speed 
+                self.speed = -abs(self.speed)
+                self.x_pos += self.speed 
         
-        elif Danger == True and self.X_pos >= DangerX_pos: #Checks if enemy ship is to the right side of the Lazer and moves the ship right if it is 
-            self.Speed = 7
-            if self.X_pos > game_screen - self.Away_From_Border and DangerX_pos > game_screen - self.Away_From_Border: 
-                self.X_pos -= self.Speed
-            elif self.X_pos < game_screen - self.Away_From_Border: 
-                self.X_pos += self.Speed
+        elif danger == True and self.x_pos >= danger_x_pos: #Checks if enemy ship is to the right side of the Lazer and moves the ship right if it is 
+            self.speed = 7
+            if self.x_pos > game_screen - self.away_from_border and danger_x_pos > game_screen - self.away_from_border: 
+                self.x_pos -= self.speed
+            elif self.x_pos < game_screen - self.away_from_border: 
+                self.x_pos += self.speed
                 
 
-    def LurePlayer (self,PlayerX_Pos, PlayerY_pos, RandomInt): #creat a function to make the AI lure the player to attempt to attack it
-        if PlayerY_pos <= self.Y_pos + 250 and self.Y_pos >= 50: 
-            self.Y_pos -= self.Speed #Panic function turns this into a charge where the ship attacks the player
-            if self.Y_pos < 150:
-                self.Y_pos += self.Speed
-        elif PlayerY_pos >= self.Y_pos + 300:
-            self.Y_pos += self.Speed
+    def lure_player (self,player_x_pos, player_y_pos, random_int): #creat a function to make the AI lure the player to attempt to attack it
+        if player_y_pos <= self.y_pos + 250 and self.y_pos >= 50: 
+            self.y_pos -= self.speed #Panic function turns this into a charge where the ship attacks the player
+            if self.y_pos < 150:
+                self.y_pos += self.speed
+        elif player_y_pos >= self.y_pos + 300:
+            self.y_pos += self.speed
         #use random int to change abs speed to negative and charge the player at random 
 
-        
-             
-            
+
 #TODO - Add variable and lists for spheres to simulate explosions         
 class particles: #used to set the base stats and attributes for particles 
-    def __init__ (self, Game_Screen): #funtion for testing particles 
-        self.shipHit = False  
-        self.particleFade =[] #list to hold colour value for yellow (start at 255) Red and Green
-        self.particleFadeAlt=[] #list to hold colour value for blue to make the the yellow colour more white 
-        self.particlesStartX_pos = []
-        self.particlesStartY_pos = []
-        self.particlesEndX_pos = []
-        self.particlesEndY_pos = []
-        self.particlesSpeed = []
-        self.Game_Screen = Game_Screen     
+    def __init__ (self, game_screen): #funtion for testing particles 
+        self.ship_hit = False  
+        self.particle_fade =[] #list to hold colour value for yellow (start at 255) Red and Green
+        self.particle_fade_alt=[] #list to hold colour value for blue to make the the yellow colour more white 
+        self.particles_start_x_pos = []
+        self.particles_start_y_pos = []
+        self.particles_end_y_pos = []
+        self.particles_end_y_pos = []
+        self.particles_speed = []
+        self.game_screen = game_screen     
 
-class HealthBar:
-    FullColour = 255
-    Chunks = 100
-    Final_shot = 25
-    def __init__ (self, X_pos, Y_pos, TotalBlocks):
-        self.DamageTaken = 0
-        self.TotalBlocks = self.Final_shot + TotalBlocks * self.Chunks #Total lenght the bar will be drawn in the X axis. (Final_shot is used for the size of the final health bar size, Total blocks determines the number of hits the ship can take, Chunks determins the size of the bar proportunate to the Blocks)
-        self.X_pos = X_pos
-        self.Y_pos = Y_pos
-        self.colour = (0,self.FullColour,self.FullColour) #Sets colour of "full health" health bar
+class health_bar:
+    full_colour = 255
+    chunks = 100
+    final_shot = 25
+    def __init__ (self, x_pos, y_pos, total_blocks):
+        self.damage_taken = 0
+        self.total_blocks = self.final_shot + total_blocks * self.chunks #Total lenght the bar will be drawn in the X axis. (Final_shot is used for the size of the final health bar size, Total blocks determines the number of hits the ship can take, Chunks determins the size of the bar proportunate to the Blocks)
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.colour = (0,self.full_colour,self.full_colour) #Sets colour of "full health" health bar
 
-    def ColourAdjust (self, TotalBlocks): #Changes colour of the enemy health bar from an initial light blue to green after being hit, and then gradually from green to red based on the number of hits and health left
-            ColourReduction = self.FullColour / TotalBlocks #determines the percetentage of the colour to be reduced according to the number of blocks selected
-            green = self.FullColour - ColourReduction * self.DamageTaken #Used to calculate by how much green will be reduced on the RGB scale
-            red = ColourReduction * self.DamageTaken #Determines how much red will be added on the RGB scale 
+    def colour_adjust (self, total_blocks): #Changes colour of the enemy health bar from an initial light blue to green after being hit, and then gradually from green to red based on the number of hits and health left
+            colour_reduction = self.full_colour / total_blocks #determines the percetentage of the colour to be reduced according to the number of blocks selected
+            green = self.full_colour - colour_reduction * self.damage_taken #Used to calculate by how much green will be reduced on the RGB scale
+            red = colour_reduction * self.damage_taken #Determines how much red will be added on the RGB scale 
             self.colour = (int(red),int(green),0)
-     
-    def Draw (self, Game_Screen):
-        pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.TotalBlocks,25]) #sets surface, colour and X-pos,Y-pos+size for the bar to be drawn.
 
-class LazarBar:
-    Length = 120 
-    def __init__ (self ,X_pos ,Y_pos ,CurrentLazarY_pos, EndPos, Colour):
-        self.X_pos = X_pos
-        self.Y_pos = Y_pos
-        self.EndPos = EndPos
-        self.colour = Colour
-        self.Chunks = self.EndPos / CurrentLazarY_pos
-        self.StartPos = CurrentLazarY_pos
+    def Draw (self, game_screen):
+        pygame.draw.rect(game_screen, self.colour, [self.x_pos,self.y_pos,self.total_blocks,25]) #sets surface, colour and X-pos,Y-pos+size for the bar to be drawn.
+
+class lazer_bar:
+    length = 120 
+    def __init__ (self, x_pos, y_pos, lazer_y_pos, end_pos, colour):
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.end_pos = end_pos
+        self.colour = colour
+        self.chunks = self.EndPos / lazer_y_pos
+        self.start_pos = lazer_y_pos
         
         
-    def EnemyDraw (self, CurrentLazerY_pos ,Game_Screen):
-        EnemyTotalLength = CurrentLazerY_pos / self.EndPos * self.Length 
-        pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,EnemyTotalLength,25])
+    def enemy_draw (self, lazer_y_pos, game_screen):
+        enemy_len = lazer_y_pos / self.end_pos * self.length 
+        pygame.draw.rect(game_screen, self.colour, [self.x_pos,self.y_pos,enemy_len,25])
 
-    def PlayerDraw (self, CurrentLazerY_pos ,Game_Screen):
-        TotalLength = CurrentLazerY_pos / self.StartPos * self.Length
-        self.PlayerTotalLength = self.Length - TotalLength
-        pygame.draw.rect(Game_Screen, self.colour, [self.X_pos,self.Y_pos,self.PlayerTotalLength,25])
+    def player_draw (self, lazer_y_pos, game_screen):
+        total_len = lazer_y_pos / self.start_pos * self.length
+        self.player_len = self.length - total_len
+        pygame.draw.rect(game_screen, self.colour, [self.x_pos, self.y_pos, self.player_len, 25])
 
 
 #GAME CLASS AND LOOP --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-class Game:
-    Tick_Rate = 60 #Change to set framerate
+class game:
+    tick_rate = 60 #Change to set framerate
     
     def __init__ (self, title, width, height):
         self.title = title
         self.width = width
         self.height = height 
-        self.Game_Screen = pygame.display.set_mode((width, height)) #Creates the window being displayed 
-        self.Game_Screen.fill(Black_Colour) #Sets the default colour of the displayed window 
+        self.game_screen = pygame.display.set_mode((width, height)) #Creates the window being displayed 
+        self.game_screen.fill(black_colour) #Sets the default colour of the displayed window 
         pygame.display.set_caption(title)
     
     
     def run_game_loop (self):
-        Is_Game_Over = False
-        PlayerWon = False
-        CPUWon = False
-        Menu = True
-        altMenu = 0
-        Fight = False
-        Y_direction = 0
-        X_direction = 0
-        LazerCount = 0
-        FireLazar = False
-        EnemyLazar = False
-        Blocks = 4 #Sets the number of hits the ships can take before it's game over
-        EnemyHit = False #used to detect if the enemy ship is hit
-        PlayerHit = False #used to detect if the player ship is hit
-        Danger = False
-        Random_Mistake = random.randint(1,10) #Determines if the AI will make a mistake 
-        AI_Difficulty = 6 #lower number = easy | Higher number = hard (select number between 1 and 10)
+        is_game_over = False
+        player_won = False
+        cpu_won = False
+        menu = True
+        alt_menu = 0
+        fight = False
+        y_direction = 0
+        x_direction = 0
+        lazer_count = 0
+        fire_lazer = False
+        enemy_lazer = False
+        blocks = 4 #Sets the number of hits the ships can take before it's game over
+        enemy_hit = False #used to detect if the enemy ship is hit
+        player_hit = False #used to detect if the player ship is hit
+        danger = False
+        random_mistake = random.randint(1,10) #Determines if the AI will make a mistake 
+        ai_difficulty = 6 #lower number = easy | Higher number = hard (select number between 1 and 10)
     
         FireOkay = True
-        Player1 = PlayerCharacter("assets/hud/ship.png", 660,600,ship_Width,ship_Height) #creates player 1 ship character 
-        Enemy = NonPlayerCharacter("assets/hud/enemy.png",160,200,ship_Width,ship_Height)
-        Lazer = LazerFire("assets/hud/Lazer.png",Player1.X_pos, Player1.Y_pos,10,60)
-        Enemy_Lazer = LazerFire("assets/hud/Lazer2.png",Enemy.X_pos +35, Enemy.Y_pos,10,60)
-        Explode = LazerFire ("assets/hud/boom.png",Enemy.X_pos -15, Enemy.Y_pos,75,75)
-        Enemy_Health = HealthBar(10,0,Blocks)
-        EnemyHealthBorder = NonPlayerCharacter("assets/hud/EnemyHealthBorder.png",0,0,180,55 ) 
-        EnemyHealthCorner = NonPlayerCharacter("assets/hud/EnemyBorderCorner.png",Blocks * Enemy_Health.Chunks - 40,-10,80,40 )
-        Player1_Health = HealthBar(470,770,Blocks)
-        Player1_Health.X_pos = Screen_Width - Blocks * Player1_Health.Chunks #sets initial starting postion of player healthbar so it's adjusted according to the number of blocks selected and the size of the chunks selected
-        PlayerHealthBorder = NonPlayerCharacter("assets/hud/PlayerHealthBorder.png",620,740,180,55 ) 
-        PlayerHealthCorner = NonPlayerCharacter("assets/hud/PlayerBorderCorner.png",Screen_Width - Blocks * Player1_Health.Chunks - 6 ,765,80,40 )
-        EnemyLazarHud = NonPlayerCharacter("assets/hud/EnemyLazerHud.png",EnemyHealthCorner.X_pos + 100, EnemyHealthBorder.Y_pos, 140,30)
-        EnemyLazarStatus = NonPlayerCharacter("assets/hud/EnemyLazerReadyStatus.png",EnemyLazarHud.X_pos + 150, EnemyHealthBorder.Y_pos, 120,30)
-        EnemyCharge = LazarBar(EnemyLazarHud.X_pos + 150 ,EnemyHealthBorder.Y_pos ,Enemy_Lazer.X_pos, 730, Red_Colour)
-        PlayerLazarHud = NonPlayerCharacter("assets/hud/PlayerLazerHud.png",PlayerHealthCorner.X_pos - 290, PlayerHealthBorder.Y_pos + 25, 140,30)
-        PlayerLazarStatus = NonPlayerCharacter("assets/hud/PlayerLazerReadyStatus.png",PlayerLazarHud.X_pos + 150, PlayerLazarHud.Y_pos, 120,30)
-        PlayerCharge = LazarBar(PlayerLazarHud.X_pos + 150, PlayerLazarHud.Y_pos ,Lazer.X_pos, 2, Blue_Colour)
-        GameOverScreen = NonPlayerCharacter("assets/menu/GameOver.png", 100, 300, 600, 200)
-        WinScreen = NonPlayerCharacter("assets/menu/win.png", 100, 300, 600, 200)
-        Logo = NonPlayerCharacter("assets/menu/Logo.png", 0, 0, 800, 800)
-        EndGame = NonPlayerCharacter("assets/menu/Quit.png", 300, 750, 201, 14)
-        ControlMenu = NonPlayerCharacter("assets/menu/ControlMenu.png", 255, 710, 284, 14 ) #Image, X, Y, Width, Height 
-        SettingsMenu = GameObject("assets/menu/SettingsMenu.png", 155, 660, 504, 18)
-        RuturnToMainMenu = NonPlayerCharacter("assets/menu/ReturnMain.png", 100, 680, 625, 20)
-        ControlList = GameObject("assets/menu/controls.png", 55, 220, 695, 200)
-        DifficultyHeader = GameObject("assets/menu/DiffHeader.png", 100, 220, 485, 18)
-        EasySetting = GameObject("assets/menu/easy.png", 100, 320, 343, 18)
-        MediumSetting = GameObject("assets/menu/Medium.png", 100, 420, 381, 18)
-        HardSetting = GameObject("assets/menu/Hard.png", 100, 520, 419, 18)
-        
+        player1 = player_obj("assets/hud/ship.png", 660, 600, ship_width, ship_height) #creates player 1 ship character 
+        enemy = nonplayer_obj("assets/hud/enemy.png", 160, 200, ship_width, ship_height)
+        lazer = lazer_obj("assets/hud/Lazer.png", player1.x_pos, player1.y_pos, 10, 60)
+        enemy_lazer = lazer_obj("assets/hud/Lazer2.png", enemy.x_pos +35, enemy.y_pos, 10, 60)
+        explode = lazer_obj ("assets/hud/boom.png", enemy.x_pos -15, enemy.y_pos, 75, 75)
+        enemy_health = health_bar(10, 0, blocks)
+        enemy_hud_border = nonplayer_obj("assets/hud/EnemyHealthBorder.png", 0, 0, 180, 55 ) 
+        enemy_hud_corner = nonplayer_obj("assets/hud/EnemyBorderCorner.png",blocks * enemy_health.chunks - 40, -10, 80, 40 )
+        player1_health = health_bar(470, 770, blocks)
+        player1_health.x_pos = screen_width - blocks * player1_health.chunks #sets initial starting postion of player healthbar so it's adjusted according to the number of blocks selected and the size of the chunks selected
+        player_hud_border = nonplayer_obj("assets/hud/PlayerHealthBorder.png", 620, 740, 180, 55 ) 
+        player_hud_corner = nonplayer_obj("assets/hud/PlayerBorderCorner.png", screen_width - blocks * player1_health.chunks - 6, 765, 80, 40 )
+        enemy_lazer_hud = nonplayer_obj("assets/hud/EnemyLazerHud.png", enemy_hud_corner.x_pos + 100, enemy_hud_border.y_pos, 140, 30)
+        enemy_lazer_status = nonplayer_obj("assets/hud/EnemyLazerReadyStatus.png", enemy_lazer_hud.x_pos + 150, enemy_hud_border.y_pos, 120, 30)
+        enemy_charge = lazer_bar(enemy_lazer_hud.x_pos + 150, enemy_hud_border.y_pos, enemy_lazer.x_pos, 730, red_colour)
+        player_lazer_hud = nonplayer_obj("assets/hud/PlayerLazerHud.png", player_hud_corner.x_pos - 290, player_hud_border.y_pos + 25, 140, 30)
+        player_lazer_status = nonplayer_obj("assets/hud/PlayerLazerReadyStatus.png", player_lazer_hud.x_pos + 150, player_lazer_hud.y_pos, 120, 30)
+        player_charge = lazer_bar(player_lazer_hud.x_pos + 150, player_lazer_hud.y_pos, lazer.x_pos, 2, blue_colour)
+        gameover_screen = nonplayer_obj("assets/menu/GameOver.png", 100, 300, 600, 200)
+        win_screen = nonplayer_obj("assets/menu/win.png", 100, 300, 600, 200)
+        logo = nonplayer_obj("assets/menu/Logo.png", 0, 0, 800, 800)
+        end_game = nonplayer_obj("assets/menu/Quit.png", 300, 750, 201, 14)
+        control_menu = nonplayer_obj("assets/menu/ControlMenu.png", 255, 710, 284, 14 ) #Image, X, Y, Width, Height 
+        settings_menu = game_object("assets/menu/SettingsMenu.png", 155, 660, 504, 18)
+        ruturn_menu = nonplayer_obj("assets/menu/ReturnMain.png", 100, 680, 625, 20)
+        control_list = game_object("assets/menu/controls.png", 55, 220, 695, 200)
+        difficulty_header = game_object("assets/menu/DiffHeader.png", 100, 220, 485, 18)
+        easy_setting = game_object("assets/menu/easy.png", 100, 320, 343, 18)
+        medium_setting = game_object("assets/menu/Medium.png", 100, 420, 381, 18)
+        hard_setting = game_object("assets/menu/Hard.png", 100, 520, 419, 18)
+
 
         sparks = particles(self.Game_Screen)
-         
 
-        while Is_Game_Over == False: #game loop checks if the game is over and will repeat until the condition is met and the game over state is set to True
+
+        while is_game_over == False: #game loop checks if the game is over and will repeat until the condition is met and the game over state is set to True
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    Is_Game_Over = True
+                if event.type == pygame.quit:
+                    is_game_over = True
 
 # CONTROLLS --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                 keys = pygame.key.get_pressed()
 
                 if keys[pygame.K_UP] == True: #Checks for Up arrow key
-                    Y_direction = 1
+                    y_direction = 1
                     if keys[pygame.K_UP] == True and keys[pygame.K_LEFT] == True: #Checks for combined Up and Left arrow key 
-                        Y_direction = 1
-                        X_direction = 1
+                        y_direction = 1
+                        x_direction = 1
                     elif keys[pygame.K_UP] == True and keys[pygame.K_RIGHT] == True: #Checks for combined Up and Right arrow key 
-                        Y_direction = 1
-                        X_direction = -1
+                        y_direction = 1
+                        x_direction = -1
                 elif keys[pygame.K_DOWN] == True: #Checks for Down arrow key
-                    Y_direction = -1
+                    y_direction = -1
                     if keys[pygame.K_DOWN] == True and keys[pygame.K_LEFT] == True: #Checks for combined Down and Left arrow key 
-                        Y_direction = -1
-                        X_direction = 1
+                        x_direction = -1
+                        x_direction = 1
                     elif keys[pygame.K_DOWN] == True and keys[pygame.K_RIGHT] == True: #Checks for combined Down and Right arrow key 
-                        Y_direction = -1
-                        X_direction = -1
+                        y_direction = -1
+                        x_direction = -1
                 elif keys[pygame.K_RIGHT] == True: #Checks for Right arrow key
-                    X_direction = -1
+                    x_direction = -1
                 elif keys[pygame.K_LEFT] == True: #Checks for Left arrow key
-                    X_direction = 1
+                    x_direction = 1
 
                 #reduces direction to 0 after keys are released        
                 elif keys[pygame.K_UP] == False or keys[pygame.K_LEFT] == False or keys[pygame.K_RIGHT] == False or keys[pygame.K_DOWN]:
-                    Y_direction = 0
-                    X_direction = 0
+                    y_direction = 0
+                    x_direction = 0
                 
                 if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP: #Checks for space bar being pressed to fire lazer 
                     if event.key == pygame.K_SPACE:
-                        if FireLazar == False:
-                            FireLazar = True
-                            Lazer.Y_pos = Player1.Y_pos
-                            Lazer.X_pos = Player1.X_pos + 32
-
+                        if fire_lazer == False:
+                            fire_lazer = True
+                            lazer.y_pos = player1.y_pos
+                            lazer.x_pos = player1.x_pos + 32
+#################################################################################
+#TODO -> Continue to refactor from this point on ################################
+#################################################################################
             #StarGeneratorFunction -------------------------------------------------------------------------------------------------------------------------------------------------
             def StarGenerator(PlayerY_direction, PlayerX_direction): #create funtion to generate and move stars based on player movement 
                 for i in range (len(StarListX_pos)): #used to generate stars based on the number selected 
@@ -425,7 +423,7 @@ class Game:
                                     StarListX_pos[i] = Screen_Height    
                             elif StarListY_pos[i] <= 0:
                                     StarListY_pos[i] = Screen_Width
-                         
+
             #Menu Selections ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
             if Menu == True and altMenu == 0:
                 self.Game_Screen.fill(Black_Colour)
@@ -433,7 +431,7 @@ class Game:
                 EndGame.Draw(self.Game_Screen)
                 ControlMenu.Draw(self.Game_Screen)
                 SettingsMenu.Draw(self.Game_Screen)
-                                  
+
                 Logo.Draw(self.Game_Screen) #PlaceHolder Logo for Main Menu
                 if keys[pygame.K_RETURN] == True: #PlaceHolder for Start input 
                     Menu = False
@@ -722,26 +720,26 @@ class Game:
                         Player1_Health.DamageTaken = Player1_Health.DamageTaken + 1 #Adjusts he colour of the health bar by incrementing the damage taken for comparison to the initial chunks 
                         if Player1_Health.TotalBlocks > 1: #Temp argument to keep the game from crashing after the final shot is given 
                             Player1_Health.ColourAdjust(Blocks)
-                        Player1_Health.Draw(self.Game_Screen)
+                        Player1_Health.draw(self.Game_Screen)
                         
 
-                elif Player1.X_pos - 35 <= Enemy.X_pos and Player1.X_pos + 25 >= Enemy.X_pos: #Used to queue lazer fire with the AI
-                    Enemy_Lazer.Y_pos = Enemy.Y_pos
-                    Enemy_Lazer.X_pos = Enemy.X_pos + 35
+                elif Player1.x_pos - 35 <= Enemy.x_pos and Player1.x_pos + 25 >= Enemy.x_pos: #Used to queue lazer fire with the AI
+                    Enemy_Lazer.y_pos = Enemy.y_pos
+                    Enemy_Lazer.x_pos = Enemy.x_pos + 35
                     LazerCount = 1 #Queued lazer fire with the AI
 
-                      
-                
-            
+
+
+
 
             pygame.display.update() #Updates the current frame after completing the loop
-            Clock.tick(self.Tick_Rate) #Sets the frame rate per second
+            clock.tick(self.tick_rate) #Sets the frame rate per second
     
 
 
 pygame.init()
 
-new_game = Game(Screen_Title,Screen_Width,Screen_Height) #creates a new game part of the "game class"
+new_game = game(screen_title,screen_width,screen_height) #creates a new game part of the "game class"
 
 new_game.run_game_loop() #Starts the game loop as defined in the class to continue looping until the game over state becomes true 
 
