@@ -475,6 +475,8 @@ class game:
                     
                     draw_star(starlist_bool, starlist_xpos, starlist_ypos )
 
+                    # TODO - Create method to move stars
+
                     # Confirms the frame ticked over by 1
                     if clock.tick() == 1:
                         
