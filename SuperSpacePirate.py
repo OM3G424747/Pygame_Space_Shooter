@@ -14,6 +14,14 @@ py -m pip install -U pygame==1.9.6 --user
 3. If it succeeds, make sure to restart any IDLE windows you have open before running this game.
 
 """
+
+"""
+below are some examples of how to draw shapes
+
+pygame.draw.rect(Game_Screen, Red_Colour, [400,100,100,100]) #sets surface, colour and X-pos,Y-pos+size for the rectangle to be drawn
+pygame.draw.circle(Game_Screen, Green_Colour, (400, 300), 50) #sets surface, colour and X-pos,Y-pos+size for the circle to be drawn
+"""
+
 #TO DO LIST:
 # 1 - Create a 3rd Enemy state where the enemy attempts to move away from the player
 # 2 - Use the 3rd state to attempt to trick the player into flying into enemy fire 
@@ -43,6 +51,7 @@ starlist_ypos = random.sample(range(1, 800), totalstars ) #  - USED TO Create ra
 starlist_speed = [] #used to generate speed for stars that seem closer
 farstarlist_speed = []
 starlist_bool = [] #list used to determine if a star is near or far
+
 for i in range(len(starlist_ypos)): #generates bool values for the star list
     random_bool = random.randint(0,1)
     if random_bool == 1:
@@ -746,9 +755,4 @@ new_game.run_game_loop() #Starts the game loop as defined in the class to contin
 pygame.quit()
 quit()
 
-"""
-below are some examples of how to draw shapes
 
-pygame.draw.rect(Game_Screen, Red_Colour, [400,100,100,100]) #sets surface, colour and X-pos,Y-pos+size for the rectangle to be drawn
-pygame.draw.circle(Game_Screen, Green_Colour, (400, 300), 50) #sets surface, colour and X-pos,Y-pos+size for the circle to be drawn
-"""
