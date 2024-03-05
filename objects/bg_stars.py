@@ -1,160 +1,102 @@
 # File containing background stars
+import random
 
-class star_obj: 
+class StarObj: 
     """
     Class for defining star object to be drawn in the background
     """
-    def __init__(self, x_pos, y_pos, width, height):
+    def __init__(self, x_pos, y_pos ):
+
+        # Sets default full colour of star
+        colour = (255, 255, 255)
+        # Sets random ammount to reduce star brightness by on spawn
+        self.dimness = random.randint(60, 120)
+        # Distance from player making the star move faster or slower
+        if random.randint(0, 1) == 1:
+            self.speed = random.uniform(4,6)
+            self.size = 2
+        else:
+            self.speed = random.uniform(1,3)
+            self.size = 1
+            # Sets dimness to double if the star is far away
+            self.dimness *= 2
 
         # Scales the image that's been loaded in 
-        self.x_pos = x_pos
-        self.y_pos = y_pos
-        self.width = width
-        self.height = height
-    
-    def draw (self,background):
+        self.x = x_pos
+        self.y = y_pos
+        self.colour = (colour[0] - self.dimness, colour[1] - self.dimness, colour[2] - self.dimness)
+
+
+    def set_flicker(self):
         """
-        Mehtod used to display the object on the game screen
+        Reroll dimness to give star a flickering effect
         """
-        pygame.draw.circle(self.game_screen, full_colour, (x_pos_list[star_num], y_pos_list[star_num]), star_size)
+        # Sets default full colour of star
+        colour = (255, 255, 255)
+        # Sets random ammount to reduce star brightness by on spawn
+        self.dimness = random.randint(60, 120)
+        # Distance from player making the star move faster or slower
+        if self.size == 1:
+            self.dimness *= 2
+        self.colour = (colour[0] - self.dimness, colour[1] - self.dimness, colour[2] - self.dimness)
 
 
-def set_bool_to_list(num = 0, bool_list = []):
-    """
-    Used to set bool values in a list at random
-    """
-    for star in range(num):
-        # Sets True for far stars and False for near stars
-        random_bool = random.randint(0,1)
-        if random_bool == 1:
-            bool_list.append(True)
-        elif random_bool == 0:
-            bool_list.append(False)
-    return bool_list
+    def move(self, x_dir, y_dir, clock_tick):
+        """
+        Moves star based on directions passed
+        """
+        delta_time = clock_tick / 1000.0
+
+        # Moves star at set speed based on delta time from last frame 
+        self.x += (x_dir * self.speed) * delta_time
+        self.y += (y_dir * self.speed) * delta_time
 
 
-def set_star_speed(star_num = 0, speed_list = [], bool_list = []):
-    """
-    Used to set speed of individual stars
-    """
-    if bool_list[star_num]:
-        random_speed = random.randint(4,6)
-        speed_list[star_num] = random_speed
-    else:
-        random_speed = random.randint(1,3)
-        speed_list[star_num] = random_speed
-
-
-def set_init_star_speed(num = 0, speed_list = [], bool_list = []):
-
-    """
-    Used to set initial speed list in for stars
-    """
-
-    # Checks if star in near of far to set initial speed list
-    for near_star in bool_list:
-
-        if near_star:
-            random_speed = random.randint(4,6)
-            speed_list.append(random_speed)
+    def reroll(self, x_pos, y_pos, size = random.uniform(1,2), colour = (255, 255, 255)):
+        """
+        Reroll star attributes to make it seem like a new star
+        """
+        # Sets random ammount to reduce star brightness by on spawn
+        dimness = random.randint(1, 90)
+        # Distance from player making the star move faster or slower
+        if random.randint(0, 1) == 1:
+            self.speed = random.uniform(4,6)
+            self.size = 2
         else:
-            random_speed = random.randint(1,3)
-            speed_list.append(random_speed)
+            self.speed = random.uniform(1,3)
+            self.size = 1
+            # Sets dimness to double if the star is far away
+            dimness *= 2
 
-def draw_star(bool_list = [], x_pos_list = [], y_pos_list = []):
+        # Scales the image that's been loaded in 
+        self.x = x_pos
+        self.y = y_pos
+        self.colour = (colour[0] - dimness, colour[1] - dimness, colour[2] - dimness)
+
+
+    def draw(self, game_screen):
+        """
+        Mehtod used to display the object on the game screen.
+        Includes logic to make the star flicker based on distance
+        """
+
+        # Sets new dimness level to make star flicker on next draw call
+        self.set_flicker()
+
+        pygame.draw.circle(game_screen, self.colour, (self.x, self.y), self.size)
+
+
+def set_star_list(window_width, window_height, starlist = [], num_of_stars = 200):
     """
-    Method that draws star based on if they should be near of far
+    Create new list of stars for game world
     """
-    for star_num in range(total_stars):
 
-        # Sets brighter flicker effect to nearby stars
-        if bool_list[star_num]:
-            star_colour = random.randint(120, 180)
-            full_colour = (star_colour, star_colour, star_colour)
-            star_size = 2
+    for num in range(num_of_stars):
+        new_star = StarObj(random.uniform(0,window_width), random.uniform(0,window_height))
+        # adds new star object to the starlist
+        starlist.append(new_star)
 
-        # Sets dim colour to far away stars
-        else:
-            star_colour = random.randint(50, 100)
-            full_colour = (star_colour, star_colour, star_colour)
-            star_size = 1
-            
-        pygame.draw.circle(self.game_screen, full_colour, (x_pos_list[star_num], y_pos_list[star_num]), star_size)
-        
-        # updates speed
-        # speed_list = set_star_speed(star_num, speed_list = [], bool_list = [])
-                
-
-def StarGenerator(PlayerY_direction, PlayerX_direction): #create funtion to generate and move stars based on player movement 
-    # Method used to draw stars
-
-    for star_num in range (total_stars): #used to generate stars based on the number selected 
-        
-        draw_star(starlist_bool, starlist_xpos, starlist_ypos )
-
-        # TODO - Create method to move stars
-
-        # Confirms the frame ticked over by 1
-        if clock.tick() == 1:
-            
-            for i in range (len(StarListX_pos)):
-                if StarListBool[i] == True:
-                    
-                    if PlayerY_direction == 1: #Checks for Up movement from player to make the stars move down 
-                        StarListY_pos[i] = StarListY_pos[i] + StarListSpeed[i]
-                        
-                        if PlayerY_direction == 1 and PlayerX_direction == 1:
-                            StarListY_pos[i] = StarListY_pos[i] + math.floor(StarListSpeed[i] /2)
-                            StarListX_pos[i] = StarListX_pos[i] + math.floor(StarListSpeed[i] /2)
-                        
-                        elif PlayerY_direction == 1 and PlayerX_direction == -1:
-                            StarListY_pos[i] = StarListY_pos[i] + math.floor(StarListSpeed[i] /2)
-                            StarListX_pos[i] = StarListX_pos[i] - math.floor(StarListSpeed[i] /2)
-                    
-                    elif PlayerY_direction == -1: #Checks for Up movement from player to make the stars move down 
-                        StarListY_pos[i] = StarListY_pos[i] - StarListSpeed[i]
-                        if PlayerY_direction == -1 and PlayerX_direction == 1:
-                            StarListY_pos[i] = StarListY_pos[i] - math.floor(StarListSpeed[i] /2)
-                            StarListX_pos[i] = StarListX_pos[i] + math.floor(StarListSpeed[i] /2)
-                        elif PlayerY_direction == -1 and PlayerX_direction == -1:
-                            StarListY_pos[i] = StarListY_pos[i] - math.floor(StarListSpeed[i] /2)
-                            StarListX_pos[i] = StarListX_pos[i] - math.floor(StarListSpeed[i] /2)
-                    elif PlayerX_direction == -1: #Checks for Right arrow key to make the stars move left 
-                        StarListX_pos[i] = StarListX_pos[i] - StarListSpeed[i]
-                    elif PlayerX_direction == 1: #Checks for Left arrow key to make the stars move right 
-                        StarListX_pos[i] = StarListX_pos[i] + StarListSpeed[i]
-
-                elif StarListBool[i] == False:
-                    if PlayerY_direction == 1:
-                        StarListY_pos[i] = StarListY_pos[i] + FarStarListSpeed[i]
-                        if PlayerY_direction == 1 and PlayerX_direction == 1:
-                            StarListY_pos[i] = StarListY_pos[i] + math.floor(FarStarListSpeed[i] /2)
-                            StarListX_pos[i] = StarListX_pos[i] + math.floor(FarStarListSpeed[i] /2)
-                        elif PlayerY_direction == 1 and PlayerX_direction == -1:
-                            StarListY_pos[i] = StarListY_pos[i] + math.floor(FarStarListSpeed[i] /2)
-                            StarListX_pos[i] = StarListX_pos[i] - math.floor(FarStarListSpeed[i] /2)
-                    elif PlayerY_direction == -1:
-                        StarListY_pos[i] = StarListY_pos[i] - FarStarListSpeed[i]
-                        if PlayerY_direction == -1 and PlayerX_direction == 1:
-                            StarListY_pos[i] = StarListY_pos[i] - math.floor(FarStarListSpeed[i] /2)
-                            StarListX_pos[i] = StarListX_pos[i] + math.floor(FarStarListSpeed[i] /2)
-                        elif PlayerY_direction == -1 and PlayerX_direction == -1:
-                            StarListY_pos[i] = StarListY_pos[i] - math.floor(FarStarListSpeed[i] /2)
-                            StarListX_pos[i] = StarListX_pos[i] - math.floor(FarStarListSpeed[i] /2)
-                    elif PlayerX_direction == -1:
-                        StarListX_pos[i] = StarListX_pos[i] - FarStarListSpeed[i]
-                    elif PlayerX_direction == 1:
-                        StarListX_pos[i] = StarListX_pos[i] + FarStarListSpeed[i]
-                    
-                if StarListY_pos[i] >= Screen_Height:
-                        StarListY_pos[i] = 0
-                elif StarListX_pos[i] >= Screen_Width:
-                        StarListX_pos[i] = 0
-                elif StarListX_pos[i] <= 0:
-                        StarListX_pos[i] = Screen_Height    
-                elif StarListY_pos[i] <= 0:
-                        StarListY_pos[i] = Screen_Width
-
+    return starlist
 
 # This code will only be executed if the script is run as the main program
 # Used for debugging and unit testing
@@ -164,7 +106,10 @@ if __name__ == "__main__":
     # TODO - Define game object to import and create tests
 
     clock = pygame.time.Clock()
-
+    # set tick rate
+    clock_tick = clock.tick(60)
+    # Screen dimensions
+    width, height = 800, 600
     # Sets number of stars to be drawn in background
     total_stars = 250
 
@@ -172,10 +117,41 @@ if __name__ == "__main__":
     starlist_xpos = random.sample(range(1, 800), total_stars )
     starlist_ypos = random.sample(range(1, 800), total_stars )
 
-    # Stores speed of individual starts in a lists
-    starlist_speed = []
-
     # List of boolean values used to determine if the star is near of far.
-    starlist_bool = [] 
+    starlist = [] 
+    if len(starlist) == 0:
+        starlist = set_star_list(width, height, starlist, total_stars)
+
+    def run_game_loop(pygame, tick):
+        pygame.display.update() #Updates the current frame after completing the loop
+        clock.tick(tick) #Sets the frame rate per second
+
+    # Initialize Pygame
+    pygame.init()
+
+
+    screen = pygame.display.set_mode((width, height))
+
+    running = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        # Clear the screen (fill with black)
+        screen.fill((0, 0, 0))
+        # Draw stars on screen for testing
+        for star in starlist:
+            star.draw(screen)
+            star.move(0, 1, clock_tick)
+            if star.y > height + star.size:
+                star.reroll(star.x, -2)
+
+        # Reset screen
+        pygame.display.update() #Updates the current frame after completing the loop
+        
+        
+    pygame.quit()
 
     print("Test completed")
