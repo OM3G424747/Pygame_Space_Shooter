@@ -98,6 +98,14 @@ def set_star_list(window_width, window_height, starlist = [], num_of_stars = 200
 
     return starlist
 
+def all_star_move(starlist, screen, clock_tick):
+    # Draw stars on screen for testing
+    for star in starlist:
+        star.draw(screen)
+        star.move(0, 1, clock_tick)
+        if star.y > height + star.size:
+            star.reroll(star.x, -2)
+
 # This code will only be executed if the script is run as the main program
 # Used for debugging and unit testing
 if __name__ == "__main__":
@@ -141,14 +149,9 @@ if __name__ == "__main__":
 
         # Clear the screen (fill with black)
         screen.fill((0, 0, 0))
-        # Draw stars on screen for testing
-        for star in starlist:
-            star.draw(screen)
-            star.move(0, 1, clock_tick)
-            if star.y > height + star.size:
-                star.reroll(star.x, -2)
-
-        # Reset screen
+        # Draw stars on screen and move them
+        all_star_move(starlist, screen, clock_tick)
+        # Update game screen to draw frame
         pygame.display.update() #Updates the current frame after completing the loop
         
         
