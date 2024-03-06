@@ -1,11 +1,13 @@
 # File containing background stars
 import random
+from pygame.surface import Surface
+from typing import List, Tuple, Optional
 
 class StarObj: 
     """
     Class for defining star object to be drawn in the background
     """
-    def __init__(self, x_pos, y_pos ):
+    def __init__(self, x_pos: int, y_pos: int ) -> None:
 
         # Sets default full colour of star
         colour = (255, 255, 255)
@@ -27,7 +29,7 @@ class StarObj:
         self.colour = (colour[0] - self.dimness, colour[1] - self.dimness, colour[2] - self.dimness)
 
 
-    def set_flicker(self):
+    def set_flicker(self) -> None:
         """
         Reroll dimness to give star a flickering effect
         """
@@ -41,7 +43,7 @@ class StarObj:
         self.colour = (colour[0] - self.dimness, colour[1] - self.dimness, colour[2] - self.dimness)
 
 
-    def move(self, x_dir, y_dir, clock_tick):
+    def move(self, x_dir: int, y_dir: int, clock_tick: int):
         """
         Moves star based on directions passed
         """
@@ -52,7 +54,7 @@ class StarObj:
         self.y += (y_dir * self.speed) * delta_time
 
 
-    def reroll(self, x_pos, y_pos, size = random.uniform(1,2), colour = (255, 255, 255)):
+    def reroll(self, x_pos, y_pos, size: Optional[int] = random.uniform(1,2), colour : Optional[tuple[int, int, int]] = (255, 255, 255)):
         """
         Reroll star attributes to make it seem like a new star
         """
@@ -74,7 +76,7 @@ class StarObj:
         self.colour = (colour[0] - dimness, colour[1] - dimness, colour[2] - dimness)
 
 
-    def draw(self, game_screen):
+    def draw(self, game_screen: Surface ) -> None:
         """
         Mehtod used to display the object on the game screen.
         Includes logic to make the star flicker based on distance
@@ -86,7 +88,7 @@ class StarObj:
         pygame.draw.circle(game_screen, self.colour, (self.x, self.y), self.size)
 
 
-def set_star_list(window_width, window_height, starlist = [], num_of_stars = 200):
+def set_star_list(window_width: int, window_height: int, starlist :Optional[List[StarObj]] = [], num_of_stars : Optional[int] = 200) -> List[StarObj]:
     """
     Create new list of stars for game world
     """
@@ -98,7 +100,7 @@ def set_star_list(window_width, window_height, starlist = [], num_of_stars = 200
 
     return starlist
 
-def all_star_move(starlist, screen, clock_tick):
+def all_star_move(starlist, screen, clock_tick) -> None:
     # Draw stars on screen for testing
     for star in starlist:
         star.draw(screen)
@@ -111,8 +113,6 @@ def all_star_move(starlist, screen, clock_tick):
 if __name__ == "__main__":
     import pygame, random
 
-    # TODO - Define game object to import and create tests
-
     clock = pygame.time.Clock()
     # set tick rate
     clock_tick = clock.tick(60)
@@ -121,22 +121,13 @@ if __name__ == "__main__":
     # Sets number of stars to be drawn in background
     total_stars = 250
 
-    # Sets two lists with X and Y pos of stars to be drawn
-    starlist_xpos = random.sample(range(1, 800), total_stars )
-    starlist_ypos = random.sample(range(1, 800), total_stars )
-
     # List of boolean values used to determine if the star is near of far.
     starlist = [] 
     if len(starlist) == 0:
         starlist = set_star_list(width, height, starlist, total_stars)
 
-    def run_game_loop(pygame, tick):
-        pygame.display.update() #Updates the current frame after completing the loop
-        clock.tick(tick) #Sets the frame rate per second
-
     # Initialize Pygame
     pygame.init()
-
 
     screen = pygame.display.set_mode((width, height))
 
