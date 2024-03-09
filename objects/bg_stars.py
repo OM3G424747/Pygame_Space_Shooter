@@ -1,7 +1,8 @@
 # File containing background stars
+# Ensure this is called first when rendering.
 import random
 from pygame.surface import Surface
-from typing import List, Tuple, Optional
+from typing import List, Optional
 
 class StarObj: 
     """

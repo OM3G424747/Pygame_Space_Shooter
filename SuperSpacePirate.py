@@ -372,6 +372,7 @@ class game:
                 x_direction = 0
 
                 keys = pygame.key.get_pressed()
+                pygame.
 
                 # Checks for Up arrow key
                 if keys[pygame.K_UP]: 
