@@ -1,5 +1,5 @@
 
-# Pygame Game Projecte
+# Pygame Game Project
 
 ## IMPORTANT!
 Kindly note this project is currently being refactored.
