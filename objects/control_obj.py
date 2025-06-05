@@ -1,5 +1,9 @@
-# Main game object
-# Contains gameplay loop, frame rate and basic display
+"""Utility to manage player control mappings.
+
+This module defines :class:`Control` which stores the key bindings used
+for player input and allows them to be updated at runtime.
+"""
+
 import pygame
 
 class Control:
