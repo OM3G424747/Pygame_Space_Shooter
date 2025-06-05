@@ -1,6 +1,7 @@
 # File containing background stars
 # Ensure this is called first when rendering.
 import random
+import pygame
 from pygame.surface import Surface
 from typing import List, Optional
 
@@ -89,10 +90,13 @@ class StarObj:
         pygame.draw.circle(game_screen, self.colour, (self.x, self.y), self.size)
 
 
-def set_star_list(window_width: int, window_height: int, starlist :Optional[List[StarObj]] = [], num_of_stars : Optional[int] = 200) -> List[StarObj]:
+def set_star_list(window_width: int, window_height: int, starlist: Optional[List[StarObj]] = None, num_of_stars: Optional[int] = 200) -> List[StarObj]:
     """
     Create new list of stars for game world
     """
+
+    if starlist is None:
+        starlist = []
 
     for num in range(num_of_stars):
         new_star = StarObj(random.uniform(0,window_width), random.uniform(0,window_height))
