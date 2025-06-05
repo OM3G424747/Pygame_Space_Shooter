@@ -1,5 +1,6 @@
 
 import sys, unittest
+import random
 from pathlib import Path
 
 # This assumes that 'tests' is a subdirectory of the root directory of the project.
@@ -9,6 +10,10 @@ sys.path.append(str(root_dir))
 from objects.bg_stars import StarObj
 
 class TestStarObj(unittest.TestCase):
+
+    def setUp(self):
+        """Seed the random generator for deterministic behavior."""
+        random.seed(0)
 
     def test_initialization(self):
         """Test that a StarObj initializes with the correct attributes."""
