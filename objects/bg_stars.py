@@ -101,12 +101,13 @@ def set_star_list(window_width: int, window_height: int, starlist :Optional[List
 
     return starlist
 
-def all_star_move(starlist, screen, clock_tick) -> None:
+def all_star_move(starlist, screen, clock_tick, window_height: int) -> None:
+    """Move and draw all stars, rerolling those that move off screen."""
     # Draw stars on screen for testing
     for star in starlist:
         star.draw(screen)
         star.move(0, 1, clock_tick)
-        if star.y > height + star.size:
+        if star.y > window_height + star.size:
             star.reroll(star.x, -2)
 
 # This code will only be executed if the script is run as the main program
@@ -142,7 +143,7 @@ if __name__ == "__main__":
         # Clear the screen (fill with black)
         screen.fill((0, 0, 0))
         # Draw stars on screen and move them
-        all_star_move(starlist, screen, clock_tick)
+        all_star_move(starlist, screen, clock_tick, height)
         # Update game screen to draw frame
         pygame.display.update() #Updates the current frame after completing the loop
         
